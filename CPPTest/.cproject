@@ -26,7 +26,11 @@
 								<option id="macosx.cpp.link.option.paths.500033592" name="Library search path (-L)" superClass="macosx.cpp.link.option.paths" valueType="libPaths">
 									<listOptionValue builtIn="false" value="/usr/lib"/>
 								</option>
-								<option id="macosx.cpp.link.option.libs.1092524463" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs"/>
+								<option id="macosx.cpp.link.option.libs.1092524463" name="Libraries (-l)" superClass="macosx.cpp.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="SDL"/>
+									<listOptionValue builtIn="false" value="GL"/>
+									<listOptionValue builtIn="false" value="GLU"/>
+								</option>
 								<option id="macosx.cpp.link.option.flags.1477570726" name="Linker flags" superClass="macosx.cpp.link.option.flags" value="" valueType="string"/>
 								<inputType id="cdt.managedbuild.tool.macosx.cpp.linker.input.1000354488" superClass="cdt.managedbuild.tool.macosx.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -51,6 +55,10 @@
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.macosx.exe.debug.option.optimization.level.1417492986" name="Optimization Level" superClass="gnu.c.compiler.macosx.exe.debug.option.optimization.level" valueType="enumerated"/>
 								<option id="gnu.c.compiler.macosx.exe.debug.option.debugging.level.2131029654" name="Debug Level" superClass="gnu.c.compiler.macosx.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.misc.other.408594824" name="Other flags" superClass="gnu.c.compiler.option.misc.other" value="-c -fmessage-length=0" valueType="string"/>
+								<option id="gnu.c.compiler.option.include.paths.1358581818" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
+									<listOptionValue builtIn="false" value="/Developer/Library/SDL/SDLMain/NIBless"/>
+									<listOptionValue builtIn="false" value=""/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1159321503" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 						</toolChain>
@@ -136,4 +144,7 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="refreshScope" versionNumber="1">
+		<resource resourceType="PROJECT" workspacePath="/CPPTest"/>
+	</storageModule>
 </cproject>
