@@ -2,6 +2,7 @@ package datatypes;
 
 public class Edge
 {
+	// an array of the vertices, clockwise
 	public Vertex[] vertices = new Vertex[2];
 	
 	public Edge(Vertex _startPoint, Vertex _endPoint)
@@ -20,4 +21,8 @@ public class Edge
 	}
 	
 	// invert edge??
+	public Edge invert()
+	{
+		return new Edge(this.vertices[1], this.vertices[0]);
+	}
 }

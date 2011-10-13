@@ -1,10 +1,9 @@
 package datatypes;
 
-import javax.media.opengl.GL2;
+import java.util.ArrayList;
 
 /**
  * A simple object to store face information.
- * Faces are triangular rather than quad
  *
  * @author Tom
  * @version 0.1
@@ -13,36 +12,46 @@ import javax.media.opengl.GL2;
 
 public class Face
 {
-	Edge[] edges = new Edge[4];
-	
-	Boolean[] edgeDirection = { true, true, true, true };
+	public ArrayList<Edge> edges = new ArrayList<Edge>();
+	public enum PolygonType { TRIANGLE, QUAD }
+	public PolygonType faceType;
 			
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4, Boolean[] _edgeDirection)
+	// for quads
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4)
 	{
-		this.edges[0] = _edge1;
-		this.edges[1] = _edge2;
-		this.edges[2] = _edge3;
-		this.edges[3] = _edge4;
+		this.edges.add(_edge1);
+		this.edges.add(_edge2);
+		this.edges.add(_edge3);
+		this.edges.add(_edge4);
 		
-		if(_edgeDirection.length == 4)
-		{
-			this.edgeDirection = _edgeDirection;
-		}
-		else System.out.println("Invalid edge direction passed");
+		this.faceType = PolygonType.QUAD;
+	}
+	
+	// for triangles
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3)
+	{
+		this.edges.add(_edge1);
+		this.edges.add(_edge2);
+		this.edges.add(_edge3);
+		
+		this.faceType = PolygonType.TRIANGLE;
 	}
 	
 	public void print()
 	{
 		System.out.println("Edge 1: ");
-		edges[0].print();
+		edges.get(0).print();
 		
 		System.out.println("Edge 2: ");
-		edges[1].print();
+		edges.get(1).print();
 		
 		System.out.println("Edge 3: ");
-		edges[2].print();
+		edges.get(2).print();
 		
-		System.out.println("Edge 4: ");
-		edges[3].print();
+		if(this.faceType == PolygonType.QUAD)
+		{
+			System.out.println("Edge 4: ");
+			edges.get(3).print();
+		}
 	}
 }

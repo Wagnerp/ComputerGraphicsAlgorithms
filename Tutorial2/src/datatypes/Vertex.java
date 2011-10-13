@@ -1,5 +1,13 @@
 package datatypes;
 
+/**
+ * A simple object to store vertex information.
+ *
+ * @author Tom
+ * @version 0.1
+ * @history 13.10.2011: Created class
+ */
+
 public class Vertex
 {
 	public float x;
