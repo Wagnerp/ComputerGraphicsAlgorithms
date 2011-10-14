@@ -4,6 +4,7 @@ public class Edge
 {
 	// an array of the vertices, clockwise
 	public Vertex[] vertices = new Vertex[2];
+	private Boolean checked = false;
 	
 	public Edge(Vertex _startPoint, Vertex _endPoint)
 	{
@@ -20,9 +21,16 @@ public class Edge
 		vertices[1].print();
 	}
 	
-	// invert edge??
 	public Edge invert()
 	{
 		return new Edge(this.vertices[1], this.vertices[0]);
 	}
+	
+	public void setChecked()
+	{
+		if(!this.checked) this.checked = true;
+		else System.out.println("Error: edge has already been checked");
+	}
+	
+	public Boolean getChecked() { return this.checked; }
 }

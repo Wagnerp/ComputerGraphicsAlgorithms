@@ -135,7 +135,7 @@ public class Main implements GLEventListener
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -7.0f);
+		gl.glTranslatef(0.0f, 0.0f, -4.0f);
 
 		// Rotate The cube around the y axis
 		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);

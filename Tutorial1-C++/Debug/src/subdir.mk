@@ -4,20 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../src/Test.cpp 
+../src/Tutorial1\ C++.cpp 
 
 OBJS += \
-./src/Test.o 
+./src/Tutorial1\ C++.o 
 
 CPP_DEPS += \
-./src/Test.d 
+./src/Tutorial1\ C++.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
-src/%.o: ../src/%.cpp
+src/Tutorial1\ C++.o: ../src/Tutorial1\ C++.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: GCC C++ Compiler'
-	g++ -I/usr/X11/include -I/System/Library/Frameworks/SDL.framework/Versions/A/Headers -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	g++ -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/Tutorial1 C++.d" -MT"src/Tutorial1\ C++.d" -o"$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -32,13 +32,13 @@ public class Mesh
 		{ 
 			new Colour((byte)227, (byte)59, (byte)101),  // pink
 			new Colour((byte)182, (byte)59, (byte)227),  // purple
-			new Colour((byte)59, (byte)149, (byte)227),  // blue
+			new Colour((byte)6, (byte)105, (byte)13),    // dark green
+			new Colour((byte)227, (byte)143, (byte)59),  // orange
 			new Colour((byte)59, (byte)227, (byte)104),  // green
+			new Colour((byte)59, (byte)149, (byte)227),  // blue
+			new Colour((byte)59, (byte)62, (byte)227),   // dark blue
 			new Colour((byte)227, (byte)213, (byte)59),  // yellow
 			new Colour((byte)227, (byte)76, (byte)59),   // red
-			new Colour((byte)227, (byte)143, (byte)59),  // orange
-			new Colour((byte)59, (byte)62, (byte)227),   // dark blue
-			new Colour((byte)6, (byte)105, (byte)13),    // dark green
 			new Colour((byte)105, (byte)6, (byte)6),     // maroon
 			new Colour((byte)255, (byte)176, (byte)176), // peach
 			new Colour((byte)219, (byte)176, (byte)255)  // lilac
