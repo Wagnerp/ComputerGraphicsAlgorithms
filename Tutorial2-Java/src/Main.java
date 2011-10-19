@@ -12,7 +12,7 @@ import datatypes.Mesh;
 import datatypes.Vertex;
 
 /**
- * The main class, contains mainly OpenGL boilerplate code
+ * The main class, largely OpenGL boilerplate code
  *
  * @author Tom
  * @version 0.1
@@ -21,22 +21,25 @@ import datatypes.Vertex;
 
 public class Main implements GLEventListener
 {
-	private static final GLU glu = new GLU();
-	private static final int framerate = 60;
+	// Some basic window/display options
+	private static final String windowTitle = "Cube Using Face-Edge-Vertex";
 	private static final int width = 640;
 	private static final int height = 480;
-	private static float rotation = 0.0f;		
+	private static final int framerate = 60;
 	
+	private static final GLU glu = new GLU();
+	private static float rotation = 0.0f;
+	
+	// the cube object
 	private static Mesh cube;
 
 	public static void main(String[] args)
 	{
-		JFrame frame = new JFrame("Cube Using Face-Edge-Vertex");
+		JFrame frame = new JFrame(windowTitle);
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(new Main());
 		frame.add(canvas);
 		frame.setSize(width, height);
-
 		frame.setVisible(true);
 
 		FPSAnimator animator = new FPSAnimator(canvas, framerate);
@@ -47,6 +50,9 @@ public class Main implements GLEventListener
 		setTriangleData();
 	}
 
+	/**
+	 * Sets the data using 4-point faces
+	 */
 	private static void setQuadData()
 	{		
 		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
@@ -80,6 +86,9 @@ public class Main implements GLEventListener
 		cube.addFace(new Face(e3.invert(), e10.invert(), e5.invert(), e12.invert()));
 	}
 	
+	/**
+	 * Sets the data using 3-point faces
+	 */
 	private static void setTriangleData()
 	{		
 		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
@@ -93,20 +102,20 @@ public class Main implements GLEventListener
 		
 		Edge e1 = new Edge(v1, v2);
 		Edge e2 = new Edge(v2, v3);
-		Edge e13 = new Edge(v3, v1);	
 		Edge e3 = new Edge(v3, v4);
 		Edge e4 = new Edge(v4, v1);
 		Edge e5 = new Edge(v5, v6);
 		Edge e6 = new Edge(v6, v7);
-		Edge e14 = new Edge(v7, v5);
 		Edge e7 = new Edge(v7, v8);
 		Edge e8 = new Edge(v8, v5);
 		Edge e9 = new Edge(v2, v7);
-		Edge e15 = new Edge(v6, v2);
 		Edge e10 = new Edge(v6, v3);
 		Edge e11 = new Edge(v8, v1);
-		Edge e16 = new Edge(v4, v8);
 		Edge e12 = new Edge(v4, v5);		
+		Edge e13 = new Edge(v3, v1);	
+		Edge e14 = new Edge(v7, v5);
+		Edge e15 = new Edge(v6, v2);
+		Edge e16 = new Edge(v4, v8);
 		Edge e17 = new Edge(v2, v8);
 		Edge e18 = new Edge(v6, v4);
 		
@@ -124,32 +133,7 @@ public class Main implements GLEventListener
 		cube.addFace(new Face(e10.invert(), e3.invert(), e18));
 		cube.addFace(new Face(e12.invert(), e5.invert(), e18.invert()));
 	}
-
-	/**
-	 * Draw the mesh... 
-	 */
-	@Override
-	public void display(GLAutoDrawable glDrawable)
-	{
-		final GL2 gl = (GL2)glDrawable.getGL();
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -4.0f);
-
-		// Rotate The cube around the y axis
-		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
-		
-		// draw the mesh
-		cube.display(gl);
-		
-		rotation += 1.0;
-	}
-
-	@Override
-	public void dispose(GLAutoDrawable arg0) { }
-
+	
 	@Override
 	public void init(GLAutoDrawable glDrawable)
 	{
@@ -171,5 +155,27 @@ public class Main implements GLEventListener
 	}
 
 	@Override
+	public void display(GLAutoDrawable glDrawable)
+	{
+		final GL2 gl = (GL2)glDrawable.getGL();
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+		gl.glLoadIdentity();
+		gl.glTranslatef(0.0f, 0.0f, -4.0f);
+
+		// Rotate The cube around the y axis
+		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
+		
+		// draw the mesh
+		cube.display(gl);
+		
+		rotation += 1.0;
+	}
+
+	@Override
 	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {	}
+	
+	@Override
+	public void dispose(GLAutoDrawable arg0) { }
 }

@@ -14,7 +14,10 @@ public class Colour
 	public byte  blue;
 	
 	/**
-	 * 
+	 * Constructor
+	 * @param r red value
+	 * @param g green value
+	 * @param b blue value
 	 */
 	public Colour(byte r, byte g, byte b)
 	{

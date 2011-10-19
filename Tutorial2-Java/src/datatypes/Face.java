@@ -3,7 +3,8 @@ package datatypes;
 import java.util.ArrayList;
 
 /**
- * A simple object to store face information.
+ * A simple object to store face information
+ * So far handles tris and quads
  *
  * @author Tom
  * @version 0.1
@@ -12,11 +13,20 @@ import java.util.ArrayList;
 
 public class Face
 {
+	// the edges in the face
 	public ArrayList<Edge> edges = new ArrayList<Edge>();
+	
+	// used to specify face type
 	public enum PolygonType { TRIANGLE, QUAD }
 	public PolygonType faceType;
 			
-	// for quads
+	/**
+	 * Constructor for quads
+	 * @param _edge1
+	 * @param _edge2
+	 * @param _edge3
+	 * @param _edge4
+	 */
 	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4)
 	{
 		this.edges.add(_edge1);
@@ -27,7 +37,12 @@ public class Face
 		this.faceType = PolygonType.QUAD;
 	}
 	
-	// for triangles
+	/**
+	 * Constructor for triangles
+	 * @param _edge1
+	 * @param _edge2
+	 * @param _edge3
+	 */
 	public Face(Edge _edge1, Edge _edge2, Edge _edge3)
 	{
 		this.edges.add(_edge1);
@@ -37,6 +52,9 @@ public class Face
 		this.faceType = PolygonType.TRIANGLE;
 	}
 	
+	/**
+	 * Prints each edge
+	 */
 	public void print()
 	{
 		System.out.println("Edge 1: ");

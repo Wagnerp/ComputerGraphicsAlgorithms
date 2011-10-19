@@ -14,6 +14,12 @@ public class Vertex
 	public float y;
 	public float z;	
 
+	/**
+	 * Constructor
+	 * @param xCoord
+	 * @param yCoord
+	 * @param zCoord
+	 */
 	public Vertex(float xCoord, float yCoord, float zCoord)
 	{
 		x = xCoord;
@@ -21,6 +27,9 @@ public class Vertex
 		z = zCoord;
 	}
 	
+	/**
+	 * Prints out the vertex's (x,y,z) coords
+	 */
 	public void print()
 	{
 		System.out.println("x: " + x + " y: " + y + " z: " + z);
