@@ -14,6 +14,8 @@ import datatypes.Vertex;
 /**
  * The main class, largely OpenGL boilerplate code
  *
+ *	TODO When you get a spare 5 mins, implement butterfly subdivision
+ *
  * @author Tom
  * @version 0.1
  * @history 13.10.2011: Created class
@@ -81,24 +83,25 @@ public class Main implements GLEventListener
 		Edge e16 = new Edge(v4, v5);
 		Edge e17 = new Edge(v2, v8);
 		Edge e18 = new Edge(v6, v4);
-								
+					
+		// Hide some code in the Mesh class
 		cube = new Mesh("Cube");
-	// front face
+		// front face
 		cube.addFace(new Face(e1, e2, e3,    new byte[]{0,0,0})); 
 		cube.addFace(new Face(e3, e4, e5,    new byte[]{1,0,0}));
-	// back face	
+		// back face	
 		cube.addFace(new Face(e6, e7, e8,    new byte[]{0,0,0}));
 		cube.addFace(new Face(e8, e9, e10,   new byte[]{1,0,0}));
-	// top face
+		// top face
 		cube.addFace(new Face(e11, e7, e12,  new byte[]{0,1,0}));
 		cube.addFace(new Face(e12, e13, e2,  new byte[]{1,0,1}));
-	// bottom face
+		// bottom face
 		cube.addFace(new Face(e14, e5, e15,  new byte[]{0,1,0}));
 		cube.addFace(new Face(e15, e16, e10, new byte[]{1,0,1}));
-	// left face
+		// left face
 		cube.addFace(new Face(e9, e11, e17,  new byte[]{1,1,0}));
 		cube.addFace(new Face(e17, e1, e14,  new byte[]{1,1,1}));
-	// right face
+		// right face
 		cube.addFace(new Face(e4, e13, e18,  new byte[]{1,1,0}));
 		cube.addFace(new Face(e18, e6, e16,  new byte[]{1,1,1}));
 	}
@@ -137,7 +140,8 @@ public class Main implements GLEventListener
 		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
 		
 		// draw the mesh
-		cube.display(gl);
+		cube.draw(gl);
+		Mesh subdividedCube = cube.subdivide();
 		
 		rotation += 1.0;
 	}

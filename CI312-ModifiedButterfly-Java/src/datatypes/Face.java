@@ -3,6 +3,8 @@ package datatypes;
 import java.util.ArrayList;
 import javax.media.opengl.GL2;
 
+import utils.Utils;
+
 /**
  * A simple object to store face information
  * So far handles tris and quads
@@ -18,6 +20,7 @@ public class Face
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
 	private ArrayList<Vertex> midPoints = new ArrayList<Vertex>(); 
 	
+	private byte[] colour = new byte[3];
 	private byte[] edgeDirection = new byte[3];
 			
 	/**
@@ -31,6 +34,11 @@ public class Face
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
 		this.edges.add(_edge3);
+		
+		// randomly generate a colour
+		this.colour[0] = (byte)(Utils.generateRandomNumber(254)+1);
+		this.colour[1] = (byte)(Utils.generateRandomNumber(254)+1);
+		this.colour[2] = (byte)(Utils.generateRandomNumber(254)+1);
 		
 		this.edgeDirection = edgeDir;		
 	}
@@ -68,4 +76,5 @@ public class Face
 	
 	public ArrayList<Edge> getEdges() { return this.edges; }
 	public ArrayList<Vertex> getMidPoints() { return this.midPoints; }
+	public byte[] getColour() { return this.colour; }
 }

@@ -4,6 +4,9 @@ package datatypes;
 import java.util.ArrayList;
 import javax.media.opengl.GL2;
 
+// Java Library imports
+import utils.Utils;
+
 /**
  * A class to represent a 3D mesh model
  * Stores the faces that make the model
@@ -20,25 +23,6 @@ public class Mesh
 	String name = "";
 	// The face objects that make up the mesh
 	private ArrayList<Face> faces = new ArrayList<Face>();
-	
-	/**
-	 * Array for colours to simplify the display process
-	 */
-	public Colour[] rbgColours = 
-	{ 
-		new Colour((byte)227, (byte)59, (byte)101),  // pink
-		new Colour((byte)182, (byte)59, (byte)227),  // purple
-		new Colour((byte)6, (byte)105, (byte)13),    // dark green
-		new Colour((byte)227, (byte)143, (byte)59),  // orange
-		new Colour((byte)59, (byte)227, (byte)104),  // green
-		new Colour((byte)59, (byte)149, (byte)227),  // blue
-		new Colour((byte)59, (byte)62, (byte)227),   // dark blue
-		new Colour((byte)227, (byte)213, (byte)59),  // yellow
-		new Colour((byte)227, (byte)76, (byte)59),   // red
-		new Colour((byte)105, (byte)6, (byte)6),     // maroon
-		new Colour((byte)255, (byte)176, (byte)176), // peach
-		new Colour((byte)219, (byte)176, (byte)255)  // lilac
-	};
 	
 	/**
 	 * Constructor
@@ -82,10 +66,12 @@ public class Mesh
 	{			
 		for (int i = 0; i < this.faces.size(); i++)
 		{
+			Face face = this.faces.get(i);
+			
 			gl.glBegin(GL2.GL_TRIANGLES);
 			
-			gl.glColor3ub(this.rbgColours[i].red, this.rbgColours[i].green, this.rbgColours[i].blue);
-			this.faces.get(i).draw(gl);
+			gl.glColor3ub(face.getColour()[0], face.getColour()[1], face.getColour()[2]);
+			face.draw(gl);
 			
 			gl.glEnd();
 		}
