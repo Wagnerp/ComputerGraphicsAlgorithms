@@ -14,8 +14,6 @@ import datatypes.Vertex;
 /**
  * The main class, largely OpenGL boilerplate code
  *
- *	TODO When you get a spare 5 mins, implement butterfly subdivision
- *
  * @author Tom
  * @version 0.1
  * @history 13.10.2011: Created class
@@ -28,6 +26,7 @@ public class Main implements GLEventListener
 	private static final int width = 640;
 	private static final int height = 480;
 	private static final int framerate = 30;
+	private int currentFrame = 1;
 	
 	private static final GLU glu = new GLU();
 	private static float rotation = 0.0f;
@@ -49,6 +48,35 @@ public class Main implements GLEventListener
 		animator.start();
 		
 		setTriangleData();
+		// initially calculate the winged edges
+		cube.calculateWingingFaces();
+	}
+
+	@Override
+	public void display(GLAutoDrawable glDrawable)
+	{		
+		final GL2 gl = (GL2)glDrawable.getGL();
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+		gl.glLoadIdentity();
+		gl.glTranslatef(0.0f, 0.0f, -10.0f);
+
+		// Rotate The cube around the y axis
+		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
+		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
+		
+		// draw the mesh
+		cube.draw(gl);
+		
+		// TODO subdivide on 's'
+		if(currentFrame % 90 == 0) 
+		{
+			Mesh subdividedCube = cube.subdivide(0.125);
+		}
+		
+		// TODO toggle rotation with 'r'
+		rotation += 1.0;
+		currentFrame++;
 	}
 	
 	@Override
@@ -69,26 +97,6 @@ public class Main implements GLEventListener
 		gl.glDepthFunc(GL.GL_LEQUAL);
 		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
-	}
-
-	@Override
-	public void display(GLAutoDrawable glDrawable)
-	{
-		final GL2 gl = (GL2)glDrawable.getGL();
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
-		gl.glLoadIdentity();
-		gl.glTranslatef(0.0f, 0.0f, -10.0f);
-
-		// Rotate The cube around the y axis
-		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
-		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
-		
-		// draw the mesh
-		cube.draw(gl);
-		Mesh subdividedCube = cube.subdivide();
-		
-		rotation += 1.0;
 	}
 	
 	/**
@@ -185,7 +193,7 @@ public class Main implements GLEventListener
 		Edge e60 = new Edge(v21, v13);
 		Edge e61 = new Edge(v13, v26);
 		Edge e62 = new Edge(v6, v24);
-		Edge e63 = new Edge(v26, v24);
+		Edge e63 = new Edge(v26, v24); // has null winged edges...
 		Edge e64 = new Edge(v26, v16);
 		Edge e65 = new Edge(v12, v25);
 		Edge e66 = new Edge(v25, v15);
@@ -199,59 +207,59 @@ public class Main implements GLEventListener
 		// Hide some code in the Mesh class
 		cube = new Mesh("Cube");
 		// front face
-		cube.addFace(new Face(e1, e2, e3,       new byte[]{0,0,0})); 
-		cube.addFace(new Face(e4, e5, e2,    	 new byte[]{0,0,1}));
-		cube.addFace(new Face(e5, e6, e7,    	 new byte[]{1,0,0}));
-		cube.addFace(new Face(e8, e9, e6,  	  	 new byte[]{0,0,1}));
-		cube.addFace(new Face(e10, e11, e12,    new byte[]{0,0,0}));
-		cube.addFace(new Face(e3, e13, e11,     new byte[]{1,0,1}));
-		cube.addFace(new Face(e13, e14, e15,    new byte[]{1,0,0}));
-		cube.addFace(new Face(e7, e16, e14,     new byte[]{1,0,1}));
+		cube.addFace(new Face(e1, e2, e3,      new byte[]{0,0,0}, "fr1")); 
+		cube.addFace(new Face(e4, e5, e2,    	new byte[]{0,0,1}, "fr2"));
+		cube.addFace(new Face(e5, e6, e7,    	new byte[]{1,0,0}, "fr3"));
+		cube.addFace(new Face(e8, e9, e6,  	  	new byte[]{0,0,1}, "fr4"));
+		cube.addFace(new Face(e10, e11, e12,   new byte[]{0,0,0}, "fr5"));
+		cube.addFace(new Face(e3, e13, e11,    new byte[]{1,0,1}, "fr6"));
+		cube.addFace(new Face(e13, e14, e15,   new byte[]{1,0,0}, "fr7"));
+		cube.addFace(new Face(e7, e16, e14,    new byte[]{1,0,1}, "fr8"));	// face 8 
 		// back face	
-		cube.addFace(new Face(e17, e18, e19,    new byte[]{0,0,0}));
-		cube.addFace(new Face(e20, e21, e18,   new byte[]{0,0,1}));
-		cube.addFace(new Face(e21, e22, e23,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e24, e25, e22,   new byte[]{0,0,1}));
-		cube.addFace(new Face(e26, e27, e28,   new byte[]{0,0,0}));
-		cube.addFace(new Face(e19, e29, e27,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e29, e30, e31,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e23, e32, e30,   new byte[]{1,0,1}));
+		cube.addFace(new Face(e17, e18, e19,    new byte[]{0,0,0}, "ba1"));
+		cube.addFace(new Face(e20, e21, e18,   new byte[]{0,0,1}, "ba2"));
+		cube.addFace(new Face(e21, e22, e23,   new byte[]{1,0,0}, "ba3"));
+		cube.addFace(new Face(e24, e25, e22,   new byte[]{0,0,1}, "ba4"));
+		cube.addFace(new Face(e26, e27, e28,   new byte[]{0,0,0}, "ba5"));
+		cube.addFace(new Face(e19, e29, e27,   new byte[]{1,0,1}, "ba6"));
+		cube.addFace(new Face(e29, e30, e31,   new byte[]{1,0,0}, "ba7"));
+		cube.addFace(new Face(e23, e32, e30,   new byte[]{1,0,1}, "ba8"));	// face 16
 		// top face
-		cube.addFace(new Face(e33, e34, e35,   new byte[]{0,0,0}));
-		cube.addFace(new Face(e24, e36, e34,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e36, e37, e38,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e20, e39, e37,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e40, e41, e4,    new byte[]{0,0,1}));
-		cube.addFace(new Face(e35, e42, e41,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e42, e43, e8,    new byte[]{1,0,1}));
-		cube.addFace(new Face(e38, e44, e43,   new byte[]{1,0,1}));
+		cube.addFace(new Face(e33, e34, e35,   new byte[]{0,0,0}, "to1"));
+		cube.addFace(new Face(e24, e36, e34,   new byte[]{1,0,1}, "to2"));
+		cube.addFace(new Face(e36, e37, e38,   new byte[]{1,0,0}, "to3"));
+		cube.addFace(new Face(e20, e39, e37,   new byte[]{1,0,1}, "to4"));
+		cube.addFace(new Face(e40, e41, e4,    new byte[]{0,0,1}, "to5"));
+		cube.addFace(new Face(e35, e42, e41,   new byte[]{1,0,1}, "to6"));
+		cube.addFace(new Face(e42, e43, e8,    new byte[]{1,0,1}, "to7"));
+		cube.addFace(new Face(e38, e44, e43,   new byte[]{1,0,1}, "to8"));	// face 24
 		// bottom face
-		cube.addFace(new Face(e45, e46, e47,   new byte[]{0,0,0}));
-		cube.addFace(new Face(e12, e48, e46,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e48, e49, e50,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e15, e51, e49,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e52, e53, e31,   new byte[]{0,0,1}));
-		cube.addFace(new Face(e47, e54, e53,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e54, e55, e28,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e50, e56, e55,   new byte[]{1,0,1}));
+		cube.addFace(new Face(e45, e46, e47,   new byte[]{0,0,0}, "bo1"));
+		cube.addFace(new Face(e12, e48, e46,   new byte[]{1,0,1}, "bo2"));
+		cube.addFace(new Face(e48, e49, e50,   new byte[]{1,0,0}, "bo3"));
+		cube.addFace(new Face(e15, e51, e49,   new byte[]{1,0,1}, "bo4"));
+		cube.addFace(new Face(e52, e53, e31,   new byte[]{0,0,1}, "bo5"));
+		cube.addFace(new Face(e47, e54, e53,   new byte[]{1,0,1}, "bo6"));
+		cube.addFace(new Face(e54, e55, e28,   new byte[]{1,0,1}, "bo7"));
+		cube.addFace(new Face(e50, e56, e55,   new byte[]{1,0,1}, "bo8"));	// face 32
 		// left face
-		cube.addFace(new Face(e25, e65, e66,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e33, e67, e65,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e67, e68, e69,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e40, e1, e68,    new byte[]{1,1,1}));
-		cube.addFace(new Face(e32, e70, e52,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e66, e71, e70,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e71, e72, e45,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e69, e10, e72,   new byte[]{1,1,1}));
+		cube.addFace(new Face(e25, e65, e66,   new byte[]{1,0,0}, "le1"));
+		cube.addFace(new Face(e33, e67, e65,   new byte[]{1,0,1}, "le2"));
+		cube.addFace(new Face(e67, e68, e69,   new byte[]{1,0,0}, "le3"));
+		cube.addFace(new Face(e40, e1, e68,    new byte[]{1,1,1}, "le4"));
+		cube.addFace(new Face(e32, e70, e52,   new byte[]{1,0,1}, "le5"));
+		cube.addFace(new Face(e66, e71, e70,   new byte[]{1,0,1}, "le6"));
+		cube.addFace(new Face(e71, e72, e45,   new byte[]{1,0,1}, "le7"));
+		cube.addFace(new Face(e69, e10, e72,   new byte[]{1,1,1}, "le8"));	// face 40
 		// right face
-		cube.addFace(new Face(e9, e57, e58,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e44, e59, e57,  new byte[]{1,0,1}));
-		cube.addFace(new Face(e59, e60, e61,   new byte[]{1,0,0}));
-		cube.addFace(new Face(e60, e39, e17,   new byte[]{1,1,1}));
-		cube.addFace(new Face(e16, e62, e51,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e58, e61, e62,   new byte[]{1,1,1}));
-		cube.addFace(new Face(e63, e64, e56,   new byte[]{1,0,1}));
-		cube.addFace(new Face(e61, e26, e64,   new byte[]{1,1,1}));
+		cube.addFace(new Face(e9, e57, e58,    new byte[]{1,0,0}, "ri1"));
+		cube.addFace(new Face(e44, e59, e57,   new byte[]{1,0,1}, "ri2"));
+		cube.addFace(new Face(e59, e60, e61,   new byte[]{1,0,0}, "ri3"));
+		cube.addFace(new Face(e60, e39, e17,   new byte[]{1,1,1}, "ri4"));
+		cube.addFace(new Face(e16, e62, e51,   new byte[]{1,0,1}, "ri5"));
+		cube.addFace(new Face(e58, e63, e62,   new byte[]{1,0,1}, "ri6"));
+		cube.addFace(new Face(e63, e64, e56,   new byte[]{1,0,1}, "ri7"));
+		cube.addFace(new Face(e61, e26, e64,   new byte[]{1,1,1}, "ri8"));	// face 48
 	}
 
 	@Override

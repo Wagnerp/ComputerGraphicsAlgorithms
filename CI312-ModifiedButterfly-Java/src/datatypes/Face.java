@@ -18,10 +18,12 @@ public class Face
 {
 	// the edges in the face
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
-	private ArrayList<Vertex> midPoints = new ArrayList<Vertex>(); 
-	
+	// the RGB value of the face's colour
 	private byte[] colour = new byte[3];
+	// holds the direction of each edge
 	private byte[] edgeDirection = new byte[3];
+	
+	private String id = "";
 			
 	/**
 	 * Constructor
@@ -29,7 +31,7 @@ public class Face
 	 * @param _edge2
 	 * @param _edge3
 	 */
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] edgeDir)
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] edgeDir, String _id)
 	{
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
@@ -41,22 +43,12 @@ public class Face
 		this.colour[2] = (byte)(Utils.generateRandomNumber(254)+1);
 		
 		this.edgeDirection = edgeDir;		
-	}
-	
-	public ArrayList<Vertex> subdivide()
-	{		
-		for (int i = 0; i < this.edges.size(); i++)
-		{	
-			if(this.edgeDirection[i] == 0) midPoints.add(this.edges.get(i).getHalfwayPoint());
-		}
-		
-		// get control points...
-		
-		return midPoints;
+		this.id = _id;
 	}
 	
 	public void draw(GL2 gl)
 	{	
+		// draw in an anti-clockwise fashion 
 		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
 		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(gl);
 		this.edges.get(1).getVertices().get(edgeDirection[1]).draw(gl);
@@ -74,7 +66,56 @@ public class Face
 		}
 	}
 	
-	public ArrayList<Edge> getEdges() { return this.edges; }
-	public ArrayList<Vertex> getMidPoints() { return this.midPoints; }
+	// public getters/setters
+	public String getId() { return this.id; }
 	public byte[] getColour() { return this.colour; }
+	
+	public Edge getEdge(Vertex v1, Vertex v2) 
+	{ 
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i); 
+			if(e.contains(v1) && e.contains(v2)) return e; 
+		} 
+		return null; 
+	}
+
+	public ArrayList<Edge> getEdges() { return this.edges; }
+	
+	// returns the edges other than the passed edge
+	public ArrayList<Edge> getEdges(Edge edge) 
+	{ 
+		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
+		
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i);
+			if(e != edge) otherEdges.add(e); 
+		}
+		
+		return otherEdges; 
+	}
+	
+	// returns the point of the face which isn't in the passed edge
+	public Vertex getPoint(Edge edge)
+	{		
+		for (int i = 0; i < this.edges.size(); i++) 
+		{			
+			Edge e = this.edges.get(i);
+			
+			Vertex edgeV1 = edge.getVertices().get(0);
+			Vertex edgeV2 = edge.getVertices().get(1);
+			
+			if(!e.equals(edge))
+			{	
+				Vertex v1 = e.getVertices().get(0);
+				Vertex v2 = e.getVertices().get(1);
+				
+				if(v2 == edgeV1 || v2 == edgeV2) return v1;
+				else if(v1 == edgeV1 || v1 == edgeV2) return v2;
+			}
+		}
+		
+		return new Vertex();
+	}
 }

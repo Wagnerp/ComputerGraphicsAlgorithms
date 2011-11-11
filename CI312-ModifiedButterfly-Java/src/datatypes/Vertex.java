@@ -18,6 +18,7 @@ public class Vertex
 	private float y;
 	private float z;
 	
+	// the edges which use this vertex
 	public ArrayList<Edge> neighbouringEdges = new ArrayList<Edge>();
 
 	/**
@@ -32,7 +33,38 @@ public class Vertex
 		y = yCoord;
 		z = zCoord;
 	}
+	// empty params, initialised to a 'zero' vertex
+	public Vertex() 
+	{  
+		x = 0;
+		y = 0;
+		z = 0;
+	}
 	
+	/**
+	 * Multiplies the vertex by the passed multiplicand
+	 * @param multiplicand
+	 * @return the new vertex
+	 */
+	public Vertex multiply(double multiplicand)
+	{
+		return new Vertex((float)(this.x*multiplicand), (float)(this.y*multiplicand), (float)(this.z*multiplicand));
+	}
+	
+	/**
+	 * Subtracts the vertex by the passed vertex
+	 * @param vertex to subtract
+	 * @return the new vertex
+	 */
+	public Vertex subtract(Vertex toSubtract)
+	{
+		return new Vertex((float)(this.x-toSubtract.getX()), (float)(this.y-toSubtract.getY()), (float)(this.z*-toSubtract.getZ()));
+	}
+	
+	/**
+	 * Draws the vertex to the passed GL2 object
+	 * @param gl
+	 */
 	public void draw(GL2 gl)
 	{
 		gl.glVertex3f(x, y, z);
