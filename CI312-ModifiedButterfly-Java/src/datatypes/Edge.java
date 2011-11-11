@@ -96,7 +96,10 @@ public class Edge
 	// public getters/setters
 	public ArrayList<Vertex> getVertices() { return vertices; }
 	public Face[] getWingedFaces() { return wingedFaces; }
-	// returns the inverted version of this edge
+	/**
+	 * Inverts the vertices of this edge
+	 * @return the inverted edge
+	 */
 	public Edge getInvert()
 	{
 		return new Edge(this.vertices.get(1), this.vertices.get(0));

@@ -46,6 +46,10 @@ public class Face
 		this.id = _id;
 	}
 	
+	/**
+	 * Draws each edge
+	 * @param gl
+	 */
 	public void draw(GL2 gl)
 	{	
 		// draw in an anti-clockwise fashion 
@@ -66,37 +70,12 @@ public class Face
 		}
 	}
 	
-	// public getters/setters
-	public String getId() { return this.id; }
-	public byte[] getColour() { return this.colour; }
-	
-	public Edge getEdge(Vertex v1, Vertex v2) 
-	{ 
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			Edge e = this.edges.get(i); 
-			if(e.contains(v1) && e.contains(v2)) return e; 
-		} 
-		return null; 
-	}
-
-	public ArrayList<Edge> getEdges() { return this.edges; }
-	
-	// returns the edges other than the passed edge
-	public ArrayList<Edge> getEdges(Edge edge) 
-	{ 
-		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
-		
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			Edge e = this.edges.get(i);
-			if(e != edge) otherEdges.add(e); 
-		}
-		
-		return otherEdges; 
-	}
-	
-	// returns the point of the face which isn't in the passed edge
+	//	public getters/setters
+	/**
+	 * Returns the vertex of the face which isn't in the passed edge
+	 * @param edge
+	 * @return the vertex
+	 */
 	public Vertex getPoint(Edge edge)
 	{		
 		for (int i = 0; i < this.edges.size(); i++) 
@@ -116,6 +95,42 @@ public class Face
 			}
 		}
 		
-		return new Vertex();
+		return null;
 	}
+	/**
+	 * Gets the edge from it's vertices
+	 * @param v1, v2 the vertices
+	 * @return the edge
+	 */
+	public Edge getEdge(Vertex v1, Vertex v2) 
+	{ 
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i); 
+			if(e.contains(v1) && e.contains(v2)) return e; 
+		} 
+		return null; 
+	}
+	/**
+	 * Returns the edges other than the passed edge
+	 * @param edge we don't want returned
+	 * @return the edges
+	 */
+	public ArrayList<Edge> getEdges(Edge edge) 
+	{ 
+		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
+		
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i);
+			if(e != edge) otherEdges.add(e); 
+		}
+		
+		return otherEdges; 
+	}
+	public ArrayList<Edge> getEdges() { return this.edges; }
+	public String getId() { return this.id; }
+	public byte[] getColour() { return this.colour; }
+	public byte[] getEdgeDirections() { return this.edgeDirection; }	
+
 }

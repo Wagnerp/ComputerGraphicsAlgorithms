@@ -1,4 +1,6 @@
 // Java imports
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
@@ -19,30 +21,36 @@ import datatypes.Vertex;
  * @history 13.10.2011: Created class
  */
 
-public class Main implements GLEventListener
+public class Main implements GLEventListener, KeyListener
 {
 	// Some basic window/display options
-	private static final String windowTitle = "Cube Using Face-Edge-Vertex";
-	private static final int width = 640;
-	private static final int height = 480;
+	private static final String windowTitle = "Butterfly Subdivision";
+	private static final int width = 1024;
+	private static final int height = 768;
 	private static final int framerate = 30;
 	private int currentFrame = 1;
 	
 	private static final GLU glu = new GLU();
 	private static float rotation = 0.0f;
+	private static float rotationSpeed = 1.0f;
+	private static Boolean rotate = true;	
+	
+	private static JFrame frame;
 	
 	// the cube object
 	private static Mesh cube;
+	// the subdivided cube object
+	private Mesh subdividedCube;
 
 	public static void main(String[] args)
 	{
-		JFrame frame = new JFrame(windowTitle);
+		frame = new JFrame(windowTitle);
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(new Main());
 		frame.add(canvas);
 		frame.setSize(width, height);
 		frame.setVisible(true);
-
+		
 		FPSAnimator animator = new FPSAnimator(canvas, framerate);
 		animator.add(canvas);
 		animator.start();
@@ -68,14 +76,7 @@ public class Main implements GLEventListener
 		// draw the mesh
 		cube.draw(gl);
 		
-		// TODO subdivide on 's'
-		if(currentFrame % 90 == 0) 
-		{
-			Mesh subdividedCube = cube.subdivide(0.125);
-		}
-		
-		// TODO toggle rotation with 'r'
-		rotation += 1.0;
+		if(rotate) rotation += rotationSpeed;
 		currentFrame++;
 	}
 	
@@ -97,22 +98,51 @@ public class Main implements GLEventListener
 		gl.glDepthFunc(GL.GL_LEQUAL);
 		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
+		
+		frame.addKeyListener(this);
 	}
+	
+	/** 
+	 * Handle key released events 
+	 */
+	public void keyReleased(KeyEvent e) 
+	{
+		//System.out.println("Main.keyReleased: " + e.getKeyChar());
+		
+		float rotationIncrement = 0.25f;
+		
+		switch(e.getKeyChar())
+		{
+			case 's':
+				subdividedCube = cube.subdivide(0.125);
+				break;
+			case 'r':
+				rotate = !rotate;
+				break;
+			case '-':
+				if(rotationSpeed > 0.20) rotationSpeed -= rotationIncrement;
+				break;
+			case '=':
+				if(rotationSpeed < 5.00) rotationSpeed += rotationIncrement;
+		}
+	}
+	public void keyTyped(KeyEvent e) { }
+	public void keyPressed(KeyEvent e) { }
 	
 	/**
 	 * Sets the data using 3-point faces
 	 */
 	private static void setTriangleData()
 	{		
-		Vertex v1  = new Vertex(0.0f, 2.0f, 0.0f);
-		Vertex v2  = new Vertex(1.0f, 2.0f, 0.0f);
-		Vertex v3  = new Vertex(2.0f, 2.0f, 0.0f);
-		Vertex v4  = new Vertex(0.0f, 1.0f, 0.0f);
-		Vertex v5  = new Vertex(1.0f, 1.0f, 0.0f);
-		Vertex v6  = new Vertex(2.0f, 1.0f, 0.0f);
-		Vertex v7  = new Vertex(0.0f, 0.0f, 0.0f);
-		Vertex v8  = new Vertex(1.0f, 0.0f, 0.0f);
-		Vertex v9  = new Vertex(2.0f, 0.0f, 0.0f);
+		Vertex v1  = new Vertex(0.0f, 2.0f,  0.0f);
+		Vertex v2  = new Vertex(1.0f, 2.0f,  0.0f);
+		Vertex v3  = new Vertex(2.0f, 2.0f,  0.0f);
+		Vertex v4  = new Vertex(0.0f, 1.0f,  0.0f);
+		Vertex v5  = new Vertex(1.0f, 1.0f,  0.0f);
+		Vertex v6  = new Vertex(2.0f, 1.0f,  0.0f);
+		Vertex v7  = new Vertex(0.0f, 0.0f,  0.0f);
+		Vertex v8  = new Vertex(1.0f, 0.0f,  0.0f);
+		Vertex v9  = new Vertex(2.0f, 0.0f,  0.0f);
 		Vertex v10 = new Vertex(2.0f, 2.0f, -2.0f);
 		Vertex v11 = new Vertex(1.0f, 2.0f, -2.0f);
 		Vertex v12 = new Vertex(0.0f, 2.0f, -2.0f);
@@ -131,22 +161,22 @@ public class Main implements GLEventListener
 		Vertex v25 = new Vertex(0.0f, 1.0f, -1.0f);
 		Vertex v26 = new Vertex(2.0f, 1.0f, -1.0f);
 		
-		Edge e1  = new Edge(v4, v1);
-		Edge e2  = new Edge(v1, v5);
-		Edge e3  = new Edge(v5, v4);
-		Edge e4  = new Edge(v1, v2);
-		Edge e5  = new Edge(v2, v5);
-		Edge e6  = new Edge(v2, v6);
-		Edge e7  = new Edge(v6, v5);
-		Edge e8  = new Edge(v2, v3);
-		Edge e9  = new Edge(v3, v6);
-		Edge e10 = new Edge(v7, v4);
-		Edge e11 = new Edge(v4, v8);
-		Edge e12 = new Edge(v8, v7);
-		Edge e13 = new Edge(v5, v8);
-		Edge e14 = new Edge(v5, v9);
-		Edge e15 = new Edge(v9, v8);
-		Edge e16 = new Edge(v6, v9);
+		Edge e1  = new Edge(v4,   v1);
+		Edge e2  = new Edge(v1,   v5);
+		Edge e3  = new Edge(v5,   v4);
+		Edge e4  = new Edge(v1,   v2);
+		Edge e5  = new Edge(v2,   v5);
+		Edge e6  = new Edge(v2,   v6);
+		Edge e7  = new Edge(v6,   v5);
+		Edge e8  = new Edge(v2,   v3);
+		Edge e9  = new Edge(v3,   v6);
+		Edge e10 = new Edge(v7,   v4);
+		Edge e11 = new Edge(v4,   v8);
+		Edge e12 = new Edge(v8,   v7);
+		Edge e13 = new Edge(v5,   v8);
+		Edge e14 = new Edge(v5,   v9);
+		Edge e15 = new Edge(v9,   v8);
+		Edge e16 = new Edge(v6,   v9);
 		Edge e17 = new Edge(v13, v10);
 		Edge e18 = new Edge(v10, v14);
 		Edge e19 = new Edge(v14, v13);
@@ -170,39 +200,39 @@ public class Main implements GLEventListener
 		Edge e37 = new Edge(v11, v21);
 		Edge e38 = new Edge(v21, v20);
 		Edge e39 = new Edge(v10, v21);
-		Edge e40 = new Edge(v1, v19);
-		Edge e41 = new Edge(v19, v2);
-		Edge e42 = new Edge(v20, v2);
-		Edge e43 = new Edge(v20, v3);
-		Edge e44 = new Edge(v21, v3);
-		Edge e45 = new Edge(v22, v7);
-		Edge e46 = new Edge(v7, v23);
+		Edge e40 = new Edge(v1,  v19);
+		Edge e41 = new Edge(v19,  v2);
+		Edge e42 = new Edge(v20,  v2);
+		Edge e43 = new Edge(v20,  v3);
+		Edge e44 = new Edge(v21,  v3);
+		Edge e45 = new Edge(v22,  v7);
+		Edge e46 = new Edge(v7,  v23);
 		Edge e47 = new Edge(v23, v22);
-		Edge e48 = new Edge(v8, v23);
-		Edge e49 = new Edge(v8, v24);
+		Edge e48 = new Edge(v8,  v23);
+		Edge e49 = new Edge(v8,  v24);
 		Edge e50 = new Edge(v24, v23);
-		Edge e51 = new Edge(v9, v24);
+		Edge e51 = new Edge(v9,  v24);
 		Edge e52 = new Edge(v18, v22);
 		Edge e53 = new Edge(v22, v17);
 		Edge e54 = new Edge(v23, v17);
 		Edge e55 = new Edge(v23, v16);
 		Edge e56 = new Edge(v24, v16);
-		Edge e57 = new Edge(v3, v26);
-		Edge e58 = new Edge(v26, v6);
+		Edge e57 = new Edge(v3,  v26);
+		Edge e58 = new Edge(v26,  v6);
 		Edge e59 = new Edge(v21, v26);
 		Edge e60 = new Edge(v21, v13);
 		Edge e61 = new Edge(v13, v26);
-		Edge e62 = new Edge(v6, v24);
-		Edge e63 = new Edge(v26, v24); // has null winged edges...
+		Edge e62 = new Edge(v6,  v24);
+		Edge e63 = new Edge(v26, v24);
 		Edge e64 = new Edge(v26, v16);
 		Edge e65 = new Edge(v12, v25);
 		Edge e66 = new Edge(v25, v15);
 		Edge e67 = new Edge(v19, v25);
-		Edge e68 = new Edge(v19, v4);
-		Edge e69 = new Edge(v4, v25);
+		Edge e68 = new Edge(v19,  v4);
+		Edge e69 = new Edge(v4,  v25);
 		Edge e70 = new Edge(v15, v22);
 		Edge e71 = new Edge(v25, v22);
-		Edge e72 = new Edge(v25, v7);
+		Edge e72 = new Edge(v25,  v7);
 		
 		// Hide some code in the Mesh class
 		cube = new Mesh("Cube");
@@ -216,7 +246,7 @@ public class Main implements GLEventListener
 		cube.addFace(new Face(e13, e14, e15,   new byte[]{1,0,0}, "fr7"));
 		cube.addFace(new Face(e7, e16, e14,    new byte[]{1,0,1}, "fr8"));	// face 8 
 		// back face	
-		cube.addFace(new Face(e17, e18, e19,    new byte[]{0,0,0}, "ba1"));
+		cube.addFace(new Face(e17, e18, e19,   new byte[]{0,0,0}, "ba1"));
 		cube.addFace(new Face(e20, e21, e18,   new byte[]{0,0,1}, "ba2"));
 		cube.addFace(new Face(e21, e22, e23,   new byte[]{1,0,0}, "ba3"));
 		cube.addFace(new Face(e24, e25, e22,   new byte[]{0,0,1}, "ba4"));

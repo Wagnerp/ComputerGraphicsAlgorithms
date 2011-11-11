@@ -33,13 +33,6 @@ public class Vertex
 		y = yCoord;
 		z = zCoord;
 	}
-	// empty params, initialised to a 'zero' vertex
-	public Vertex() 
-	{  
-		x = 0;
-		y = 0;
-		z = 0;
-	}
 	
 	/**
 	 * Multiplies the vertex by the passed multiplicand

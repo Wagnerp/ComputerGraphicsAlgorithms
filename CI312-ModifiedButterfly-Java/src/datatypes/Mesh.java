@@ -45,6 +45,11 @@ public class Mesh
 		this.faces.add(faceToAdd);
 	}
 	
+	/**
+	 * Subdivides the cube using the modified butterfly scheme
+	 * @param weighting of the control points
+	 * @return the subdivided mesh
+	 */
 	public Mesh subdivide(double weight)
 	{
 		System.out.println("Mesh.subdivide using weighting of " + weight + ": There are " + this.faces.size() + " faces");
@@ -58,35 +63,25 @@ public class Mesh
 	}
 
 	/**
-	 * Default_method_description
+	 * Calculates all of the control points for each edge in the model
 	 */
 	private void calculateControlPoints()
-	{
-		System.out.println("Mesh.calculateControlPoints");
-		
+	{		
 		// create a HashMap for the control points
-		HashMap<String,Vertex> controlPoints = new HashMap<String,Vertex>();
-		controlPoints.put("a1", new Vertex());
-		controlPoints.put("a2", new Vertex());
-		controlPoints.put("b1", new Vertex());
-		controlPoints.put("b2", new Vertex());
-		controlPoints.put("c1", new Vertex());
-		controlPoints.put("c2", new Vertex());
-		controlPoints.put("c3", new Vertex());
-		controlPoints.put("c4", new Vertex());
-		controlPoints.put("d1", new Vertex());
-		controlPoints.put("d2", new Vertex());		
+		HashMap<String,Vertex> controlPoints = new HashMap<String,Vertex>();	
 		
 		// loop through the faces
-//		for (int i = 0; i < this.faces.size(); i++)
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < this.faces.size(); i++)
+		//for (int i = 0; i < 1; i++)
 		{
 			Face face = this.faces.get(i);
 					
 			// loop through the edges
-//			for (int j = 0; j < face.getEdges().size(); j++)
-			for (int j = 2; j < 3; j++)
+			for (int j = 0; j < face.getEdges().size(); j++)
+			//for (int j = 2; j < 3; j++)
 			{
+				if(face.getEdgeDirections()[j] == '1') continue; 
+				
 				Edge currentEdge = face.getEdges().get(j);
 				Face currentFace = null; 
 				Face previousFace = currentEdge.getWingedFaces()[0];				
@@ -95,7 +90,7 @@ public class Mesh
 				
 				System.out.println("Calculating control points for Face " + face.getId() + " edge" + j);
 				
-				// A POINTS ----------------> we already know the a points
+				// A1/A2 -------------> we already know the a points
 
 				controlPoints.put("a1", currentEdge.getVertices().get(0));
 				controlPoints.put("a2", currentEdge.getVertices().get(1));
@@ -108,8 +103,7 @@ public class Mesh
 				controlPoints.put("b1", currentEdge.getWingedFaces()[0].getPoint(currentEdge));
 				
 				// C1 ---------------->
-	
-				// update vars
+				
 				currentEdge = previousFace.getEdge(a1, controlPoints.get("b1"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];				
 				previousFace = currentFace;
@@ -117,19 +111,15 @@ public class Mesh
 				
 				// D1 ---------------->				
 				
-				// update vars
 				currentEdge = previousFace.getEdge(a1, controlPoints.get("c1"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];				
-				System.out.println("Current Face: " + previousFace.getId() + "-> Next face: " + currentFace.getId() + "...Current Edge: (" + currentEdge.getVertices().get(0).getX() + "," + currentEdge.getVertices().get(0).getY() + "," + currentEdge.getVertices().get(0).getZ() + ") - (" + currentEdge.getVertices().get(1).getX() + "," + currentEdge.getVertices().get(1).getY() + "," + currentEdge.getVertices().get(1).getZ() + ")");
 				previousFace = currentFace;
 				controlPoints.put("d1", currentFace.getPoint(currentEdge));
 				
 				// C2 ---------------->				
 				
-				// update vars
 				currentEdge = previousFace.getEdge(a1, controlPoints.get("d1"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];
-				System.out.println("Current Face: " + previousFace.getId() + "-> Next face: " + currentFace.getId() + "...Current Edge: (" + currentEdge.getVertices().get(0).getX() + "," + currentEdge.getVertices().get(0).getY() + "," + currentEdge.getVertices().get(0).getZ() + ") - (" + currentEdge.getVertices().get(1).getX() + "," + currentEdge.getVertices().get(1).getY() + "," + currentEdge.getVertices().get(1).getZ() + ")");
 				previousFace = currentFace;
 				controlPoints.put("c2", currentFace.getPoint(currentEdge));
 				
@@ -137,62 +127,48 @@ public class Mesh
 				
 				currentEdge = face.getEdges().get(j); 
 				previousFace = currentEdge.getWingedFaces()[1];	
-				
 				controlPoints.put("b2", currentEdge.getWingedFaces()[1].getPoint(currentEdge));
 				
 				// C3 ---------------->				
 				
-				// update vars
 				currentEdge = previousFace.getEdge(a2, controlPoints.get("b2"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];
-				
-				System.out.println("Current Face: " + previousFace.getId() + "-> Next face: " + currentFace.getId() + "...Current Edge: (" + currentEdge.getVertices().get(0).getX() + "," + currentEdge.getVertices().get(0).getY() + "," + currentEdge.getVertices().get(0).getZ() + ") - (" + currentEdge.getVertices().get(1).getX() + "," + currentEdge.getVertices().get(1).getY() + "," + currentEdge.getVertices().get(1).getZ() + ")");
-				
 				previousFace = currentFace;
-				
 				controlPoints.put("c3", currentFace.getPoint(currentEdge));
 				
 				// D2 ---------------->				
 				
-				// update vars
 				currentEdge = previousFace.getEdge(a2, controlPoints.get("c3"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];
-				
-				System.out.println("Current Face: " + previousFace.getId() + "-> Next face: " + currentFace.getId() + "...Current Edge: (" + currentEdge.getVertices().get(0).getX() + "," + currentEdge.getVertices().get(0).getY() + "," + currentEdge.getVertices().get(0).getZ() + ") - (" + currentEdge.getVertices().get(1).getX() + "," + currentEdge.getVertices().get(1).getY() + "," + currentEdge.getVertices().get(1).getZ() + ")");
-				
 				previousFace = currentFace;
-				
 				controlPoints.put("d2", currentFace.getPoint(currentEdge));
 				
 				// C4 ---------------->				
 				
-				// update vars
 				currentEdge = previousFace.getEdge(a2, controlPoints.get("d2"));
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];
-				
-				System.out.println("Current Face: " + previousFace.getId() + "-> Next face: " + currentFace.getId() + "...Current Edge: (" + currentEdge.getVertices().get(0).getX() + "," + currentEdge.getVertices().get(0).getY() + "," + currentEdge.getVertices().get(0).getZ() + ") - (" + currentEdge.getVertices().get(1).getX() + "," + currentEdge.getVertices().get(1).getY() + "," + currentEdge.getVertices().get(1).getZ() + ")");
-				
 				previousFace = currentFace;
-				
 				controlPoints.put("c4", currentFace.getPoint(currentEdge)); 
+			
+				// print out the control points
+				System.out.println();
+				System.out.println("Control points calculated...");
+				System.out.print("a1: "); controlPoints.get("a1").print();
+				System.out.print("a2: "); controlPoints.get("a2").print();
+				System.out.println();
+				System.out.print("b1: "); controlPoints.get("b1").print();
+				System.out.print("b2: "); controlPoints.get("b2").print();
+				System.out.println();
+				System.out.print("c1: "); controlPoints.get("c1").print();
+				System.out.print("c2: "); controlPoints.get("c2").print();
+				System.out.print("c3: "); controlPoints.get("c3").print();
+				System.out.print("c4: "); controlPoints.get("c4").print();
+				System.out.println();
+				System.out.print("d1: "); controlPoints.get("d1").print();
+				System.out.print("d2: "); controlPoints.get("d2").print();
+				System.out.println();
 			}
 		}
-		
-		// print out the control points
-		System.out.println("Control Points:");
-		System.out.print("a1: "); controlPoints.get("a1").print();
-		System.out.print("a2: "); controlPoints.get("a2").print();
-		System.out.println();
-		System.out.print("b1: "); controlPoints.get("b1").print();
-		System.out.print("b2: "); controlPoints.get("b2").print();
-		System.out.println();
-		System.out.print("c1: "); controlPoints.get("c1").print();
-		System.out.print("c2: "); controlPoints.get("c2").print();
-		System.out.print("c3: "); controlPoints.get("c3").print();
-		System.out.print("c4: "); controlPoints.get("c4").print();
-		System.out.println();
-		System.out.print("d1: "); controlPoints.get("d1").print();
-		System.out.print("d2: "); controlPoints.get("d2").print();
 	}
 
 	/**
@@ -251,5 +227,6 @@ public class Mesh
 		}
 	}
 	
+	// public getters/setters
 	public ArrayList<Face> getFaces() { return this.faces; }
 }
