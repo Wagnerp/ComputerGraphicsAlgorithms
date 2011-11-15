@@ -2,8 +2,7 @@ package datatypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import utils.Utils;
+import java.util.Map;
 
 /**
  * A simple object to store edge information
@@ -20,8 +19,6 @@ public class Edge
 	// the faces which wing this edge 
 	private Face[] wingedFaces = new Face[2];
 	
-	private String id = "";
-	
 	/**
 	 * Constructor
 	 * @param _startPoint
@@ -32,23 +29,6 @@ public class Edge
 		this.vertices.add(_startPoint);
 		this.vertices.add(_endPoint);
 	}
-
-	/**
-	 * Calculates the new point from the control points
-	 * @param a HashMap of the control points
-	 * @return the new point
-	 */
-	public Vertex getNewPoint(HashMap controlPoints)
-	{
-		System.out.println("Edge.getNewPoint");
-
-		Vertex newPoint = new Vertex(0, 0, 0);
-		
-		// loop through the HashMap using the algorithm 
-		// using the weighings to build up the new point... 
-		
-		return newPoint;
-	}
 	
 	/**
 	 * Adds two faces to the winged faces list
@@ -56,15 +36,53 @@ public class Edge
 	 */
 	public void addWingedFaces(Face face1, Face face2)
 	{
-		// make sure we're not just trying to add the same faces in reverse order
+		// check we're not trying to add same faces in reverse order
 		if(wingedFaces[0] != face2 && wingedFaces[1] != face1 && wingedFaces[0] != face1 && wingedFaces[1] != face2) 
 		{
-			//System.out.println(face1.getId() + " wings " + face2.getId());
 			wingedFaces[0] = face1;
 			wingedFaces[1] = face2;
 		}
-		//else System.out.println(face1.getId() + " wings " + face2.getId() + ": Trying to add the same winged faces, faces not added");
 	}
+
+	/**
+	 * Calculates the new point from the control points
+	 * @param a HashMap of the control points
+	 * @return the new point
+	 */
+	public Vertex calculateNewPoint(HashMap<String, Vertex> controlPoints, float weightedValue)
+	{
+		Vertex newPoint = new Vertex(0,0,0);
+
+		for (Map.Entry<String, Vertex> entry : controlPoints.entrySet()) 
+		{			
+			String key = entry.getKey();
+			Vertex controlPoint = entry.getValue();
+						
+			if(key.charAt(0) == 'a')
+			{
+				controlPoint = Vertex.multiply(controlPoint, 0.5);				
+				controlPoint = Vertex.add(controlPoint, (weightedValue*-1));
+			}
+			else if(key.charAt(0) == 'b')
+			{
+				controlPoint = (Vertex.multiply(controlPoint, 0.125));
+				controlPoint = Vertex.add(controlPoint, (weightedValue*2));
+			}
+			else if(key.charAt(0) == 'c')
+			{
+				controlPoint = (Vertex.multiply(controlPoint, -0.0625));
+				controlPoint = Vertex.add(controlPoint, (weightedValue*-1));
+			}
+			else if(key.charAt(0) == 'd') continue; // not using modified butterfly
+			
+			newPoint = Vertex.add(newPoint, controlPoint, true);
+		}
+		
+		System.out.print("Edge.calculateNewPoint: ");
+		newPoint.print();
+		return newPoint;
+	}
+	
 	
 	/**
 	 * Check to see whether the passed vertex is in this edge

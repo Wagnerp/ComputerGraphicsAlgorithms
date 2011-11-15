@@ -3,13 +3,7 @@ package datatypes;
 // Java imports
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
 import javax.media.opengl.GL2;
-
-// Java Library imports
-import utils.Utils;
 
 /**
  * A class to represent a 3D mesh model
@@ -26,6 +20,10 @@ public class Mesh
 	String name = "";
 	// The face objects that make up the mesh
 	private ArrayList<Face> faces = new ArrayList<Face>();
+	// whether or not to show certain debug messages
+	private Boolean debug = false;
+	// used when calculating new points
+	private float weightedValue;
 	
 	/**
 	 * Constructor
@@ -50,9 +48,11 @@ public class Mesh
 	 * @param weighting of the control points
 	 * @return the subdivided mesh
 	 */
-	public Mesh subdivide(double weight)
+	public Mesh subdivide(float weight)
 	{
-		System.out.println("Mesh.subdivide using weighting of " + weight + ": There are " + this.faces.size() + " faces");
+		if(debug) System.out.println("Mesh.subdivide using weighting of " + weight + ": There are " + this.faces.size() + " faces");
+		
+		this.weightedValue = weight;
 		
 		// will be the new subdivided mesh
 		Mesh newMesh = new Mesh("Butterfly Mesh");
@@ -64,31 +64,29 @@ public class Mesh
 
 	/**
 	 * Calculates all of the control points for each edge in the model
+	 * 
+	 * Not carried out particularly neatly - had issues with b2
+	 * TODO Mesh.calculateControlPoints: refactor into a cleaner loop
+	 * TODO Mesh.calculateControlPoints: remove debug stuff
 	 */
 	private void calculateControlPoints()
 	{		
-		// create a HashMap for the control points
 		HashMap<String,Vertex> controlPoints = new HashMap<String,Vertex>();	
 		
-		// loop through the faces
 		for (int i = 0; i < this.faces.size(); i++)
-		//for (int i = 0; i < 1; i++)
 		{
 			Face face = this.faces.get(i);
 					
-			// loop through the edges
 			for (int j = 0; j < face.getEdges().size(); j++)
-			//for (int j = 2; j < 3; j++)
 			{
 				if(face.getEdgeDirections()[j] == '1') continue; 
 				
 				Edge currentEdge = face.getEdges().get(j);
 				Face currentFace = null; 
-				Face previousFace = currentEdge.getWingedFaces()[0];				
-				// to save looking up repeatedly in the HashMap
-				Vertex a1, a2;
+				Face previousFace = currentEdge.getWingedFaces()[0];
+				Vertex a1, a2; // to save looking up repeatedly in the HashMap
 				
-				System.out.println("Calculating control points for Face " + face.getId() + " edge" + j);
+				if(debug) System.out.println("Calculating control points for Face " + face.getId() + " edge" + j);
 				
 				// A1/A2 -------------> we already know the a points
 
@@ -98,7 +96,7 @@ public class Mesh
 				a1 = controlPoints.get("a1");
 				a2 = controlPoints.get("a2");
 				
-				// B1 ---------------->
+				// B1 ----------------> b1, c1, d1, c2 -> b2, c3, d2, c4 
 				
 				controlPoints.put("b1", currentEdge.getWingedFaces()[0].getPoint(currentEdge));
 				
@@ -149,47 +147,50 @@ public class Mesh
 				currentFace = (currentEdge.getWingedFaces()[0] != previousFace) ? currentEdge.getWingedFaces()[0] : currentEdge.getWingedFaces()[1];
 				previousFace = currentFace;
 				controlPoints.put("c4", currentFace.getPoint(currentEdge)); 
-			
+				
 				// print out the control points
-				System.out.println();
-				System.out.println("Control points calculated...");
-				System.out.print("a1: "); controlPoints.get("a1").print();
-				System.out.print("a2: "); controlPoints.get("a2").print();
-				System.out.println();
-				System.out.print("b1: "); controlPoints.get("b1").print();
-				System.out.print("b2: "); controlPoints.get("b2").print();
-				System.out.println();
-				System.out.print("c1: "); controlPoints.get("c1").print();
-				System.out.print("c2: "); controlPoints.get("c2").print();
-				System.out.print("c3: "); controlPoints.get("c3").print();
-				System.out.print("c4: "); controlPoints.get("c4").print();
-				System.out.println();
-				System.out.print("d1: "); controlPoints.get("d1").print();
-				System.out.print("d2: "); controlPoints.get("d2").print();
-				System.out.println();
+				if(debug) 
+				{
+					System.out.println();
+					System.out.println("Control points calculated...");
+					System.out.print("a1: "); controlPoints.get("a1").print();
+					System.out.print("a2: "); controlPoints.get("a2").print();
+					System.out.println();
+					System.out.print("b1: "); controlPoints.get("b1").print();
+					System.out.print("b2: "); controlPoints.get("b2").print();
+					System.out.println();
+					System.out.print("c1: "); controlPoints.get("c1").print();
+					System.out.print("c2: "); controlPoints.get("c2").print();
+					System.out.print("c3: "); controlPoints.get("c3").print();
+					System.out.print("c4: "); controlPoints.get("c4").print();
+					System.out.println();
+					System.out.print("d1: "); controlPoints.get("d1").print();
+					System.out.print("d2: "); controlPoints.get("d2").print();
+					System.out.println();
+				}
+				
+				face.getEdges().get(j).calculateNewPoint(controlPoints, weightedValue);
 			}
 		}
 	}
-
+	
 	/**
 	 * Loops through the mesh and calculates 
 	 * which faces wing which edges
 	 */
 	public void calculateWingingFaces()
 	{
-		System.out.println("Mesh.calculateWingingFaces");
+		if(debug) System.out.println("Mesh.calculateWingingFaces");
 		
-		// loop through the faces
 		for (int i = 0; i < this.faces.size(); i++)
 		{
 			Face face = this.faces.get(i);
 		
-			// loop through the edges
 			for (int j = 0; j < face.getEdges().size(); j++)
 			{
 				Edge edge = face.getEdges().get(j);
 				
-				// now loop through the faces again, looking for the other face that contains 'edge'
+				// loop through faces again, looking for other face that contains 'edge'
 				for (int k = 0; k < this.faces.size(); k++)
 				{
 					Face face2 = this.faces.get(k);
@@ -198,10 +199,7 @@ public class Mesh
 						Edge e = face2.getEdges().get(l);
 						
 						// add the two winging faces to 'edge' object
-						if(edge.equals(e) && !face.equals(face2))
-						{							
-							edge.addWingedFaces(face, face2);
-						}
+						if(edge.equals(e) && !face.equals(face2))	edge.addWingedFaces(face, face2);
 					}
 				}				
 			}

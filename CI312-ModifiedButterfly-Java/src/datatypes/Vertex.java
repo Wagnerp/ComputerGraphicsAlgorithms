@@ -35,26 +35,6 @@ public class Vertex
 	}
 	
 	/**
-	 * Multiplies the vertex by the passed multiplicand
-	 * @param multiplicand
-	 * @return the new vertex
-	 */
-	public Vertex multiply(double multiplicand)
-	{
-		return new Vertex((float)(this.x*multiplicand), (float)(this.y*multiplicand), (float)(this.z*multiplicand));
-	}
-	
-	/**
-	 * Subtracts the vertex by the passed vertex
-	 * @param vertex to subtract
-	 * @return the new vertex
-	 */
-	public Vertex subtract(Vertex toSubtract)
-	{
-		return new Vertex((float)(this.x-toSubtract.getX()), (float)(this.y-toSubtract.getY()), (float)(this.z*-toSubtract.getZ()));
-	}
-	
-	/**
 	 * Draws the vertex to the passed GL2 object
 	 * @param gl
 	 */
@@ -78,4 +58,30 @@ public class Vertex
 	public float getX() { return this.x; }
 	public float getY() { return this.y; }
 	public float getZ() { return this.z; }
+	
+	/**
+	 * Static methods
+	 */
+	
+	/**
+	 *  Adds the passed vertices
+	 * @param tempPoint
+	 */
+	public static Vertex add(Vertex v1, Vertex v2, boolean print)
+	{
+		return new Vertex((v1.getX()+v2.getX()), (v1.getY()+v2.getY()), (v1.getZ()+v2.getZ()));
+	}
+	// allows the user to pass a single value to add instead of a vertex
+	public static Vertex add(Vertex v, float toAdd) { return add(v, new Vertex(toAdd,toAdd,toAdd), false); }
+	
+	/**
+	 * Multiplies the vertex by the multiplicand
+	 * @param the vertex
+	 * @param multiplicand
+	 * @return the new vertex
+	 */
+	public static Vertex multiply(Vertex v, double multiplicand)
+	{
+		return new Vertex((float)(v.getX()*multiplicand), (float)(v.getY()*multiplicand), (float)(v.getZ()*multiplicand));
+	}
 }

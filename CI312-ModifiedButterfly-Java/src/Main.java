@@ -114,7 +114,7 @@ public class Main implements GLEventListener, KeyListener
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = cube.subdivide(0.125);
+				subdividedCube = cube.subdivide(0.0625f);
 				break;
 			case 'r':
 				rotate = !rotate;
