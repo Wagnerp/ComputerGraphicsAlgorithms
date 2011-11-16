@@ -5,6 +5,9 @@ import javax.media.opengl.*;
 import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
 import javax.swing.JFrame;
+
+import jogamp.opengl.glu.nurbs.Subdivider;
+
 import com.jogamp.opengl.util.FPSAnimator;
 
 // Package imports
@@ -24,34 +27,38 @@ import datatypes.Vertex;
 public class Main implements GLEventListener, KeyListener
 {
 	// Some basic window/display options
-	private static final String windowTitle = "Butterfly Subdivision";
-	private static final int width = 1024;
-	private static final int height = 768;
-	private static final int framerate = 30;
-	private int currentFrame = 1;
+	private static final String WINDOW_TITLE = "Butterfly Subdivision";
+	private static final int WIDTH = 1024;
+	private static final int HEIGHT = 768;
+	private static final int FRAMERATE = 30;
 	
-	private static final GLU glu = new GLU();
+	private static final GLU GLU = new GLU();
+	private static final float WEIGHTING = 0.0625f;
+	
 	private static float rotation = 0.0f;
 	private static float rotationSpeed = 1.0f;
+	private static final float ROTATION_INCREMENT = 0.25f;
+	
 	private static Boolean rotate = true;	
+	private static Boolean showSubdividedMesh = false;	
 	
 	private static JFrame frame;
 	
 	// the cube object
 	private static Mesh cube;
 	// the subdivided cube object
-	private Mesh subdividedCube;
+	private static Mesh subdividedCube;
 
 	public static void main(String[] args)
 	{
-		frame = new JFrame(windowTitle);
+		frame = new JFrame(WINDOW_TITLE);
 		GLCanvas canvas = new GLCanvas();
 		canvas.addGLEventListener(new Main());
 		frame.add(canvas);
-		frame.setSize(width, height);
+		frame.setSize(WIDTH, HEIGHT);
 		frame.setVisible(true);
 		
-		FPSAnimator animator = new FPSAnimator(canvas, framerate);
+		FPSAnimator animator = new FPSAnimator(canvas, FRAMERATE);
 		animator.add(canvas);
 		animator.start();
 		
@@ -73,11 +80,11 @@ public class Main implements GLEventListener, KeyListener
 		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
 		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
 		
-		// draw the mesh
-		cube.draw(gl);
+		// decide which mesh to draw
+		if(!showSubdividedMesh) cube.draw(gl);
+		else if(subdividedCube != null) subdividedCube.draw(gl);
 		
 		if(rotate) rotation += rotationSpeed;
-		currentFrame++;
 	}
 	
 	@Override
@@ -85,10 +92,10 @@ public class Main implements GLEventListener, KeyListener
 	{
 		final GL2 gl = (GL2)glDrawable.getGL();
 
-		gl.glViewport (0, 0, width, height);
+		gl.glViewport (0, 0, WIDTH, HEIGHT);
 		gl.glMatrixMode(GL2.GL_PROJECTION); 
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, (float)(width)/(float)(height), 1.0f, 100.0f); 
+		GLU.gluPerspective(45.0f, (float)(WIDTH)/(float)(HEIGHT), 1.0f, 100.0f); 
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 		gl.glShadeModel(GL2.GL_SMOOTH);
@@ -106,24 +113,27 @@ public class Main implements GLEventListener, KeyListener
 	 * Handle key released events 
 	 */
 	public void keyReleased(KeyEvent e) 
-	{
-		//System.out.println("Main.keyReleased: " + e.getKeyChar());
-		
-		float rotationIncrement = 0.25f;
-		
+	{		
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = cube.subdivide(0.0625f);
+				subdividedCube = subdividedCube.subdivide(WEIGHTING);
+				showSubdividedMesh = true;
+				break;
+			case 'a':
+				showSubdividedMesh = !showSubdividedMesh;
 				break;
 			case 'r':
 				rotate = !rotate;
 				break;
 			case '-':
-				if(rotationSpeed > 0.20) rotationSpeed -= rotationIncrement;
+				if(rotationSpeed > 0.20) rotationSpeed -= ROTATION_INCREMENT;
 				break;
 			case '=':
-				if(rotationSpeed < 5.00) rotationSpeed += rotationIncrement;
+				if(rotationSpeed < 5.00) rotationSpeed += ROTATION_INCREMENT;
+			default:
+				//System.out.println("'" + e.getKeyChar() + "' not mapped");
+				break;
 		}
 	}
 	public void keyTyped(KeyEvent e) { }
@@ -235,7 +245,8 @@ public class Main implements GLEventListener, KeyListener
 		Edge e72 = new Edge(v25,  v7);
 		
 		// Hide some code in the Mesh class
-		cube = new Mesh("Cube");
+		cube = subdividedCube = new Mesh("Cube");
+		
 		// front face
 		cube.addFace(new Face(e1, e2, e3,      new byte[]{0,0,0}, "fr1")); 
 		cube.addFace(new Face(e4, e5, e2,    	new byte[]{0,0,1}, "fr2"));

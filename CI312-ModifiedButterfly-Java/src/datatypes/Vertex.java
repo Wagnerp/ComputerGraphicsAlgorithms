@@ -48,7 +48,7 @@ public class Vertex
 	 */
 	public void print()
 	{
-		System.out.println("x: " + x + " y: " + y + " z: " + z);
+		System.out.println("(x: " + x + " y: " + y + " z: " + z + ")");
 	}
 	
 	/**
@@ -65,14 +65,14 @@ public class Vertex
 	
 	/**
 	 *  Adds the passed vertices
-	 * @param tempPoint
+	 * @param the product
 	 */
-	public static Vertex add(Vertex v1, Vertex v2, boolean print)
+	public static Vertex add(Vertex v1, Vertex v2)
 	{
 		return new Vertex((v1.getX()+v2.getX()), (v1.getY()+v2.getY()), (v1.getZ()+v2.getZ()));
 	}
 	// allows the user to pass a single value to add instead of a vertex
-	public static Vertex add(Vertex v, float toAdd) { return add(v, new Vertex(toAdd,toAdd,toAdd), false); }
+	public static Vertex add(Vertex v, float toAdd) { return add(v, new Vertex(toAdd,toAdd,toAdd)); }
 	
 	/**
 	 * Multiplies the vertex by the multiplicand

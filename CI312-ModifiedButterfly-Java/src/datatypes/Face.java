@@ -47,11 +47,39 @@ public class Face
 	}
 	
 	/**
+	 * Splits the edges of the face face into 9 new edges
+	 * @return ArrayList of the new edges
+	 */
+	public ArrayList<Edge> subdivide()
+	{ 
+		ArrayList<Edge> newEdges = new ArrayList<Edge>(); 
+		ArrayList<Vertex> midPoints = new ArrayList<Vertex>(); 
+		
+		for (int j = 0; j < this.getEdges().size(); j++)
+		{
+			Vertex v1 = this.getEdges().get(j).getVertices().get(0);
+			Vertex v2 = this.getEdges().get(j).getVertices().get(1);
+			Vertex midPoint = this.getEdges().get(j).getMidPoint();
+						
+			newEdges.add(new Edge(v1, midPoint));
+			newEdges.add(new Edge(midPoint, v2));
+			
+			midPoints.add(midPoint);
+		}
+		
+		newEdges.add(new Edge(midPoints.get(0), midPoints.get(1)));
+		newEdges.add(new Edge(midPoints.get(1), midPoints.get(2)));
+		newEdges.add(new Edge(midPoints.get(2), midPoints.get(0)));
+			
+		return newEdges;
+	}
+	
+	/**
 	 * Draws each edge
 	 * @param gl
 	 */
 	public void draw(GL2 gl)
-	{	
+	{			
 		// draw in an anti-clockwise fashion 
 		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
 		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(gl);
@@ -68,6 +96,7 @@ public class Face
 			System.out.println("Edge " + i+1 + ": ");
 			this.edges.get(i).print();
 		}
+		if(this.edges.size() == 0) System.out.println("Face.print: There are no edges...");
 	}
 	
 	//	public getters/setters
@@ -132,5 +161,4 @@ public class Face
 	public String getId() { return this.id; }
 	public byte[] getColour() { return this.colour; }
 	public byte[] getEdgeDirections() { return this.edgeDirection; }	
-
 }

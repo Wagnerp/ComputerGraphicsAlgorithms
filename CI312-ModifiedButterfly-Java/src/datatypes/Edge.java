@@ -18,6 +18,8 @@ public class Edge
 	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	// the faces which wing this edge 
 	private Face[] wingedFaces = new Face[2];
+	// used when subdividing...
+	private Vertex midPoint = null;
 	
 	/**
 	 * Constructor
@@ -46,41 +48,39 @@ public class Edge
 
 	/**
 	 * Calculates the new point from the control points
+	 * using the standard butterfly algorithm:
+	 * a: a/2
+	 * b: 2w(b)
+	 * c: -w(c)
 	 * @param a HashMap of the control points
 	 * @return the new point
 	 */
-	public Vertex calculateNewPoint(HashMap<String, Vertex> controlPoints, float weightedValue)
+	public void calculateNewPoint(HashMap<String,Vertex> controlPoints, float weightedValue)
 	{
 		Vertex newPoint = new Vertex(0,0,0);
 
-		for (Map.Entry<String, Vertex> entry : controlPoints.entrySet()) 
+		for (Map.Entry<String,Vertex> entry : controlPoints.entrySet()) 
 		{			
 			String key = entry.getKey();
 			Vertex controlPoint = entry.getValue();
-						
-			if(key.charAt(0) == 'a')
+					
+			switch(key.charAt(0))
 			{
-				controlPoint = Vertex.multiply(controlPoint, 0.5);				
-				controlPoint = Vertex.add(controlPoint, (weightedValue*-1));
+				case 'a':
+					controlPoint = Vertex.multiply(controlPoint, 0.5);
+					break;
+				case 'b':
+					controlPoint = Vertex.multiply(controlPoint, (2*weightedValue));
+					break;
+				case 'c':
+					controlPoint = Vertex.multiply(controlPoint, (weightedValue*-1));
+					break;
+				default:
+					continue; // not using modified, so no need for d points
 			}
-			else if(key.charAt(0) == 'b')
-			{
-				controlPoint = (Vertex.multiply(controlPoint, 0.125));
-				controlPoint = Vertex.add(controlPoint, (weightedValue*2));
-			}
-			else if(key.charAt(0) == 'c')
-			{
-				controlPoint = (Vertex.multiply(controlPoint, -0.0625));
-				controlPoint = Vertex.add(controlPoint, (weightedValue*-1));
-			}
-			else if(key.charAt(0) == 'd') continue; // not using modified butterfly
-			
-			newPoint = Vertex.add(newPoint, controlPoint, true);
+			newPoint = Vertex.add(newPoint, controlPoint);
 		}
-		
-		System.out.print("Edge.calculateNewPoint: ");
-		newPoint.print();
-		return newPoint;
+		this.midPoint = newPoint;
 	}
 	
 	
@@ -113,6 +113,7 @@ public class Edge
 	
 	// public getters/setters
 	public ArrayList<Vertex> getVertices() { return vertices; }
+	public Vertex getMidPoint() { return midPoint; }
 	public Face[] getWingedFaces() { return wingedFaces; }
 	/**
 	 * Inverts the vertices of this edge
