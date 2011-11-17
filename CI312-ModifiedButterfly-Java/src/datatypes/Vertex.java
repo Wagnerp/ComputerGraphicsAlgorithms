@@ -48,7 +48,7 @@ public class Vertex
 	 */
 	public void print()
 	{
-		System.out.println("(x: " + x + " y: " + y + " z: " + z + ")");
+		System.out.println("(x:" + x + " y:" + y + " z:" + z + ")");
 	}
 	
 	/**

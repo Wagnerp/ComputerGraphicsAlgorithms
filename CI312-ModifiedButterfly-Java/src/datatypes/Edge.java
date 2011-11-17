@@ -58,7 +58,7 @@ public class Edge
 	public void calculateNewPoint(HashMap<String,Vertex> controlPoints, float weightedValue)
 	{
 		Vertex newPoint = new Vertex(0,0,0);
-
+		
 		for (Map.Entry<String,Vertex> entry : controlPoints.entrySet()) 
 		{			
 			String key = entry.getKey();

@@ -55,7 +55,9 @@ public class Mesh
 		// now we have the new points, build the mesh
 		Mesh subdividedMesh = this.buildNewMesh();
 		
+		// recalculate the winged faces
 		subdividedMesh.calculateWingingFaces();
+		
 		return subdividedMesh;
 	}
 
@@ -69,64 +71,65 @@ public class Mesh
 		Mesh mesh = new Mesh("Butterfly Mesh"); // the subdivided mesh
 		
 		// build the new faces from the new points
-		for (int i = 0; i < faces.size(); i++)
+		for (int i = 0; i < this.faces.size(); i++)
 		{	
-			//	the order in which the faces should be built
-			//	065, 127, 834, 678
-			int[][] buildOrder = new int[4][3];
-			buildOrder[0][0] = 0; buildOrder[0][1] = 6; buildOrder[0][2] = 5; // 1
-			buildOrder[1][0] = 1; buildOrder[1][1] = 2; buildOrder[1][2] = 7; // 2
-			buildOrder[2][0] = 8; buildOrder[2][1] = 3; buildOrder[2][2] = 4; // 3
-			buildOrder[3][0] = 6; buildOrder[3][1] = 7; buildOrder[3][2] = 8; // 4
+			Face[] newFaces = this.faces.get(i).subdivide();
 			
-			for (int k = 0; k < 4; k++)
+			for (int j = 0; j < newFaces.length; j++)
 			{
-				byte[] edgeDirection = new byte[3];
-				Edge[] newEdges = new Edge[3]; 
-				
-				for (int l = 0; l < newEdges.length; l++)
-				{
-					// uses Face.subdivide to get the 9 new edges
-					newEdges[l] = this.faces.get(i).subdivide().get(buildOrder[k][l]);
-					Edge tempEdge = mesh.getEdge(newEdges[l]);
-					
-					if(tempEdge != null)
-					{
-						newEdges[l] = tempEdge;
-						edgeDirection[l] = (byte)1;				
-					} 
-					else edgeDirection[l] = (byte)0;
-				}		
-				mesh.addFace(new Face(newEdges[0], newEdges[1], newEdges[2], edgeDirection, ""));		
+				mesh.addFace(newFaces[j]);
 			}
 		}
 		return mesh;
+	}
+	
+	/**
+	 * Works out the new point for each edge based
+	 * on its control points. Stores the new point 
+	 * in the edge
+	 */
+	private void calulateNewVertices()
+	{		
+		// work out the new points
+		for (int i = 0; i < this.faces.size(); i++)
+		{
+			Face face = this.faces.get(i);
+			
+			for (int j = 0; j < face.getEdges().size(); j++)
+			{
+				Edge edge = face.getEdges().get(j);
+				
+				if(face.getEdgeDirections()[j] != '1') // only calculate point once for each edge
+				{
+					HashMap<String,Vertex> controlPoints = this.calculateControlPoints(face,edge);
+					edge.calculateNewPoint(controlPoints, this.weightedValue);
+				}
+			}
+		}
 	}
 
 	/**
 	 * Calculates all of the control points for each edge in the model
 	 * 
 	 * Not carried out particularly neatly - had issues with b2
-	 * TODO Mesh.calculateControlPoints: re-factor into a cleaner loop if poss
+	 * TODO Mesh.calculateControlPoints: re-factor into a cleaner loop if possible
 	 */
 	private HashMap<String,Vertex> calculateControlPoints(Face face, Edge edge)
 	{		
 		HashMap<String,Vertex> controlPoints = new HashMap<String,Vertex>();	
 
 		Edge currentEdge = edge;
-		Face currentFace = null; 
-		Face previousFace = currentEdge.getWingedFaces()[0];
+		Face currentFace, previousFace = currentEdge.getWingedFaces()[0];
 		Vertex a1, a2; // to save looking up repeatedly in the HashMap
 
-		// A1/A2 -------------> we already know the a points
+		// A1/A2 -------------> we already know the a points, set variables and add to HashMap
 
-		controlPoints.put("a1", currentEdge.getVertices().get(0));
-		controlPoints.put("a2", currentEdge.getVertices().get(1));
-		// also set the variables
-		a1 = controlPoints.get("a1");
-		a2 = controlPoints.get("a2");
+		a1 = currentEdge.getVertices().get(0);
+		a2 = currentEdge.getVertices().get(1); 
+		controlPoints.put("a1", a1);
+		controlPoints.put("a2", a2);
 
-		// B1 ----------------> b1, c1, d1, c2 -> b2, c3, d2, c4 
+		// B1 ----------------> 
 
 		controlPoints.put("b1", currentEdge.getWingedFaces()[0].getPoint(currentEdge));
 
@@ -182,31 +185,6 @@ public class Mesh
 	}
 	
 	/**
-	 * Works out the new point for each edge based
-	 * on its control points. Stores the new point 
-	 * in the edge
-	 */
-	private void calulateNewVertices()
-	{
-		// work out the new points
-		for (int i = 0; i < this.faces.size(); i++)
-		{
-			Face face = this.faces.get(i);
-			
-			for (int j = 0; j < face.getEdges().size(); j++)
-			{
-				Edge edge = face.getEdges().get(j);
-				
-				if(face.getEdgeDirections()[j] != '1') // only calculate point once for each edge
-				{
-					HashMap<String,Vertex> controlPoints = this.calculateControlPoints(face,edge);
-					edge.calculateNewPoint(controlPoints, this.weightedValue);
-				}
-			}
-		}
-	}
-	
-	/**
 	 * Loops through the mesh and calculates 
 	 * which faces wing which edges
 	 */
@@ -238,6 +216,7 @@ public class Mesh
 		}
 	}
 	
+	// TODO Mesh.getEdge: remove if not used
 	private Edge getEdge(Vertex v1, Vertex v2)
 	{		
 		for (int i = 0; i < this.faces.size(); i++)
@@ -285,6 +264,7 @@ public class Mesh
 	 * Just prints out a list of the control points
 	 * @param controlPoints
 	 */
+	@SuppressWarnings("unused")
 	private void printControlPoints(HashMap<String, Vertex> controlPoints)
 	{
 		System.out.println();

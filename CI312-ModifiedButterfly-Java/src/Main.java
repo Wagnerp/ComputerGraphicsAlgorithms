@@ -6,8 +6,6 @@ import javax.media.opengl.awt.GLCanvas;
 import javax.media.opengl.glu.*;
 import javax.swing.JFrame;
 
-import jogamp.opengl.glu.nurbs.Subdivider;
-
 import com.jogamp.opengl.util.FPSAnimator;
 
 // Package imports
@@ -117,7 +115,7 @@ public class Main implements GLEventListener, KeyListener
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = subdividedCube.subdivide(WEIGHTING);
+				subdividedCube = cube.subdivide(WEIGHTING);
 				showSubdividedMesh = true;
 				break;
 			case 'a':
