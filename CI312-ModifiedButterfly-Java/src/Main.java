@@ -115,7 +115,7 @@ public class Main implements GLEventListener, KeyListener
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = cube.subdivide(WEIGHTING);
+				subdividedCube = subdividedCube.subdivide(WEIGHTING);
 				showSubdividedMesh = true;
 				break;
 			case 'a':
@@ -124,6 +124,8 @@ public class Main implements GLEventListener, KeyListener
 			case 'r':
 				rotate = !rotate;
 				break;
+			case 'q':
+				subdividedCube = cube;
 			case '-':
 				if(rotationSpeed > 0.20) rotationSpeed -= ROTATION_INCREMENT;
 				break;

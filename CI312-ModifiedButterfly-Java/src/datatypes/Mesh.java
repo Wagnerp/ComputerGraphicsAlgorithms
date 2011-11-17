@@ -47,18 +47,18 @@ public class Mesh
 	 * @return the subdivided mesh
 	 */
 	public Mesh subdivide(float weight)
-	{
+	{		
 		this.weightedValue = weight;
 		
 		this.calulateNewVertices();
 		
 		// now we have the new points, build the mesh
-		Mesh subdividedMesh = this.buildNewMesh();
+		Mesh newMesh = this.buildNewMesh();
 		
 		// recalculate the winged faces
-		subdividedMesh.calculateWingingFaces();
+		newMesh.calculateWingingFaces();
 		
-		return subdividedMesh;
+		return newMesh;
 	}
 
 
@@ -130,7 +130,7 @@ public class Mesh
 		controlPoints.put("a2", a2);
 
 		// B1 ----------------> 
-
+		
 		controlPoints.put("b1", currentEdge.getWingedFaces()[0].getPoint(currentEdge));
 
 		// C1 ---------------->
@@ -189,46 +189,40 @@ public class Mesh
 	 * which faces wing which edges
 	 */
 	public void calculateWingingFaces()
-	{
-		System.out.println("Mesh.calculateWingingFaces: " + this.faces.size());
+	{		
+		System.out.println("Mesh.calculateWingingFaces: f:" + this.faces.size());
 		
 		for (int i = 0; i < this.faces.size(); i++)
 		{
-			Face face = this.faces.get(i);
-		
-			for (int j = 0; j < face.getEdges().size(); j++)
+			Face currentFace = this.faces.get(i);
+			
+			for (int j = 0; j < currentFace.getEdges().size(); j++)
 			{
-				Edge edge = face.getEdges().get(j);
+				Edge currentEdge = currentFace.getEdges().get(j);
 				
 				// loop through faces again, looking for other face that contains 'edge'
 				for (int k = 0; k < this.faces.size(); k++)
 				{
-					Face face2 = this.faces.get(k);
-					for (int l = 0; l < face2.getEdges().size(); l++)
+					Face comparisonFace = this.faces.get(k);
+					
+					if(comparisonFace.getEdge(currentEdge) != null && comparisonFace != currentFace) 
+						currentEdge.addWingedFaces(currentFace, comparisonFace);
+					
+					/*Face comparisonFace = this.faces.get(k);
+					
+					for (int l = 0; l < comparisonFace.getEdges().size(); l++)
 					{
-						Edge e = face2.getEdges().get(l);
+						Edge comprisonEdge = comparisonFace.getEdges().get(l);
 						
 						// add the two winging faces to 'edge' object
-						if(edge.equals(e) && !face.equals(face2))	edge.addWingedFaces(face, face2);
-					}
-				}				
+						if(currentEdge.equals(comprisonEdge) && !currentFace.equals(comparisonFace))	
+							currentEdge.addWingedFaces(currentFace, comparisonFace);
+					}*/
+				}
 			}
 		}
 	}
-	
-	// TODO Mesh.getEdge: remove if not used
-	private Edge getEdge(Vertex v1, Vertex v2)
-	{		
-		for (int i = 0; i < this.faces.size(); i++)
-		{
-			Edge e = this.faces.get(i).getEdge(v1, v2);
-			if(e != null) return e;
-		}
-		return null;
-	}
-	// can also pass an edge to getEdge
-	private Edge getEdge(Edge edge) { return this.getEdge(edge.getVertices().get(0), edge.getVertices().get(1)); }
-	
+
 	/**
 	 * Handles drawing the mesh to screen
 	 * @param gl a reference to the GL2 object
