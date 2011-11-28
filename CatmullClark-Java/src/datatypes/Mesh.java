@@ -2,7 +2,6 @@ package datatypes;
 
 // Java imports
 import java.util.ArrayList;
-import java.util.HashMap;
 import javax.media.opengl.GL2;
 
 /**
@@ -20,8 +19,6 @@ public class Mesh
 	String name = "";
 	// The face objects that make up the mesh
 	private ArrayList<Face> faces = new ArrayList<Face>();
-	// used when calculating new points
-	private float weightedValue;
 	
 	/**
 	 * Constructor
@@ -47,11 +44,90 @@ public class Mesh
 	 */
 	public Mesh subdivide()
 	{		
+		System.out.println("Mesh.subdivide");
+		
 		// 1. Loop through each face calculating face points
 		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateFacePoint();
 		
-		// 2. Loop through each edge calculating edge points
-		// also, work out the vertex valence as we go...
+		Mesh newMesh = new Mesh("Catmull-Clark Mesh");
+		newMesh = this;
+		
+		this.calculateEdgePoints();
+		this.calculateVertexPoints(newMesh);	
+		
+		
+		// 4. Connect the new face points to the new edge points
+		
+		// 5. Connect each vertex point to each new edge point
+		
+		return this;
+	}
+
+	/**
+	 * Uses the following formula to work out the 
+	 * vertex points:
+	 * 
+	 *		 	(avg. of all adj. face points)
+	 * 							+
+	 *  2*(avg. of all edge points of incident edges)
+	 * 							+
+	 * 			vertex*(vertex valence - 3)
+	 * 							/
+	 * 					vertex valence
+	 */
+	private void calculateVertexPoints(Mesh mesh)
+	{
+		for (int i = 0; i < this.faces.size(); i++) 
+		{	
+			Face face = this.faces.get(i);
+			for (int j = 0; j < face.getEdges().size(); j++) 
+			{				
+				for (int k = 0; k < face.getVertices().size(); k++)
+				{			
+					Vertex vertex = face.getVertices().get(k); 				// current vertex
+					Vertex fpAvg = new Vertex(0,0,0); 							// average of adjacent face points
+					Vertex epAvg = new Vertex(0,0,0); 							// average of adjacent edge midpoints
+					Vertex vertValenceSum = new Vertex(0,0,0);				// vertex*(vertex valence - 3)
+					Vertex vertexPoint = new Vertex(0,0,0); 					// new vertex
+					int vertValence = vertex.getIncidentEdges().size();	// current vertex's valence
+					
+					for (int l = 0; l < vertValence; l++)
+					{
+						Edge edge = vertex.getIncidentEdges().get(l);
+						Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
+						Vertex.add(edge.getMidPoint(), epAvg);
+					}
+					
+					fpAvg = Vertex.divide(fpAvg, vertValence);
+					
+					epAvg = Vertex.divide(epAvg, vertValence);
+					epAvg = Vertex.multiply(epAvg, 2);
+					
+					vertValenceSum = Vertex.multiply(vertex, (vertValence-3));
+					
+					// now add the individual parts and divide by the valence
+					vertexPoint = Vertex.add(vertexPoint, fpAvg);
+					vertexPoint = Vertex.add(vertexPoint, epAvg);
+					vertexPoint = Vertex.add(vertexPoint, vertValenceSum);
+					vertexPoint = Vertex.divide(vertexPoint, vertValence);
+					
+					 
+					/*Vertex oldVertex = mesh.getFaces().get(i).getVertices().get(k);
+					System.out.println("old vertex: ");oldVertex.print();
+					System.out.println("new vertex: ");vertexPoint.print();					
+					oldVertex = vertexPoint;
+					System.out.println("old vertex...new: "); oldVertex.print();*/
+				}
+			}
+		}
+	}
+
+	/**
+	 * Loops through each edge calculating the edge points
+	 * also works out the vertex valence as we go
+	 */
+	private void calculateEdgePoints()
+	{
 		for (int i = 0; i < this.faces.size(); i++) 
 		{
 			Face face = this.faces.get(i);
@@ -66,60 +142,6 @@ public class Mesh
 				}
 			}
 		}
-		
-		// 3. Calculate vertex points
-		//
-		// Formula:
-		// 
-		// 		( avg. of all adj. face points )
-		// 							+
-		// 2 * ( avg. of all edge points of incident edges )
-		// 							+
-		// 		vertex * ( vertex valence - 3 )
-		// 							/
-		// 					vertex valence
-		//
-		for (int i = 0; i < this.faces.size(); i++) 
-		{	
-			Face face = this.faces.get(i);
-			for (int j = 0; j < face.getEdges().size(); j++) 
-			{				
-				for (int k = 0; k < face.getVertices().size(); k++)
-				{			
-					Vertex vertex = face.getVertices().get(k); 				// current vertex
-					Vertex fpAvg = new Vertex(0,0,0); 							// average of adjacent face points
-					Vertex epAvg = new Vertex(0,0,0); 							// average of adjacent edge points
-					Vertex vertValenceSum = new Vertex(0,0,0);				// vertex*(vertex valence - 3)
-					Vertex vertexPoint = new Vertex(0,0,0); 					// new vertex
-					int vertValence = vertex.getIncidentEdges().size();	// current vertex's valence
-					
-					for (int l = 0; l < vertValence; l++)
-					{
-						Edge edge = vertex.getIncidentEdges().get(l);
-						Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
-						Vertex.add(edge.getEdgePoint(), epAvg);
-					}
-					
-					fpAvg = Vertex.divide(fpAvg, vertValence);
-					
-					epAvg = Vertex.divide(epAvg, vertValence);
-					epAvg = Vertex.multiply(epAvg, 2);
-					
-					vertValenceSum = Vertex.multiply(vertex, (vertValence-3));
-					
-					vertexPoint = Vertex.add(vertexPoint, fpAvg);
-					vertexPoint = Vertex.add(vertexPoint, epAvg);
-					vertexPoint = Vertex.add(vertexPoint, vertValenceSum);
-					vertexPoint = Vertex.divide(vertexPoint, vertValence);
-				}
-			}
-		}		
-		
-		// 4. Connect the new face points to the new edge points
-		
-		// 5. Connect each vertex point to each new edge point
-		
-		return null;
 	}
 	
 	/**
