@@ -9,6 +9,8 @@ import javax.media.opengl.GL2;
  * A simple object to store face information
  * So far handles tris and quads
  *
+ *	TODO: Move getters/setters into alphabetical order
+ *
  * @author Tom
  * @version 0.1
  * @history 13.10.2011: Created class
@@ -82,6 +84,78 @@ public class Face
 		
 		// get the average
 		this.facePoint = Vertex.divide(sum, faceVertices.size());
+	}
+	
+	/**
+	 * Uses the following formula to work out the 
+	 * vertex points:
+	 * 
+	 *		 	(avg. of all adj. face points)
+	 * 							+
+	 *  2*(avg. of all edge points of incident edges)
+	 * 							+
+	 * 			vertex*(vertex valence - 3)
+	 * 							/
+	 * 					vertex valence
+	 */
+	public static Vertex getVertexPoint(Vertex oldVertexPoint)
+	{						
+		Vertex fpAvg = new Vertex(0,0,0); 							// average of adjacent face points
+		Vertex epAvg = new Vertex(0,0,0); 							// average of adjacent edge midpoints
+		Vertex vertValenceSum = new Vertex(0,0,0);				// vertex*(vertex valence - 3)
+		Vertex vertexPoint = new Vertex(0,0,0); 					// new vertex
+		int vertValence = oldVertexPoint.getIncidentEdges().size();	// current vertex's valence
+
+		for (int l = 0; l < vertValence; l++)
+		{
+			Edge edge = oldVertexPoint.getIncidentEdges().get(l);
+			Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
+			Vertex.add(edge.getMidPoint(), epAvg);
+		}
+
+		fpAvg = Vertex.divide(fpAvg, vertValence);
+
+		epAvg = Vertex.divide(epAvg, vertValence);
+		epAvg = Vertex.multiply(epAvg, 2);
+
+		vertValenceSum = Vertex.multiply(oldVertexPoint, (vertValence-3));
+
+		// now add the individual parts and divide by the valence
+		vertexPoint = Vertex.add(vertexPoint, fpAvg);
+		vertexPoint = Vertex.add(vertexPoint, epAvg);
+		vertexPoint = Vertex.add(vertexPoint, vertValenceSum);
+		vertexPoint = Vertex.divide(vertexPoint, vertValence);
+
+		return vertexPoint;
+	}
+	
+	/**
+	 * Build a list of new faces using the
+	 * edge, vertex and face points
+	 * @return list of new faces (one face per vertex)
+	 */
+	public ArrayList<Face> createNewFaces()
+	{
+		// Connect the new face points to the new edge points
+		// Connect each vertex point to each new edge point
+		Vertex facePoint, edge1Point, edge2Point;
+		Edge edge1, edge2, edge3, edge4;
+		ArrayList<Face> newFaces = new ArrayList<Face>(); 
+		
+		// - one face for every vertex
+		
+		// for every vertex in face:
+		
+			// edge 1 = vertexPoint, edge1Point
+			// edge 2 = edge1Point, facePoint
+			// edge 3 = facePoint, edge2Point
+			// edge 4 = edge2Point, vertexPoint
+		
+			// create new face(edge1, edge2, edge3, edge4)
+		
+		// end for
+		
+		return newFaces;
 	}
 	
 	//	public getters/setters
