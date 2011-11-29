@@ -1,8 +1,7 @@
 package datatypes;
 
+// Java imports
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A simple object to store edge information
@@ -36,6 +35,8 @@ public class Edge
 	}
 	public Edge(Vertex _startPoint, Vertex _endPoint)
 	{
+		System.out.println("Edge.Edge: " + _startPoint + "-" + _endPoint);
+		
 		new Edge(_startPoint, _endPoint, "no_id");
 	}
 	

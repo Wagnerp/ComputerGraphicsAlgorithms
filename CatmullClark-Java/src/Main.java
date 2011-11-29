@@ -211,7 +211,7 @@ public class Main implements GLEventListener, KeyListener
 		Edge e6 = new Edge(v3, v1);
 					
 		// Hide some code in the Mesh class
-		cube = subdividedCube = new Mesh("Pyramid");
+		cube = new Mesh("Pyramid");
 		cube.addFace(new Face(e1, e2, e4, new byte[]{0,1,1},"f1")); 
 		cube.addFace(new Face(e2, e3, e5, new byte[]{0,1,1},"f1"));
 		cube.addFace(new Face(e3, e1, e6, new byte[]{0,1,1},"f3"));
