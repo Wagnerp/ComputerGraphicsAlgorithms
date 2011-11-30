@@ -19,7 +19,7 @@ public class Mesh
 	// an identifier for the mesh, mainly for debugging
 	String name = "";
 	// The face objects that make up the mesh
-	private static ArrayList<Face> faces = new ArrayList<Face>();
+	private ArrayList<Face> faces = new ArrayList<Face>();
 	
 	/**
 	 * Constructor
@@ -27,8 +27,7 @@ public class Mesh
 	 */
 	public Mesh(String _name)
 	{
-		System.out.println("Mesh.Mesh");		
-		this.name = _name; 
+		this.name = _name;
 	}
 	
 	/**
@@ -37,7 +36,7 @@ public class Mesh
 	 */
 	public void addFace(Face faceToAdd)
 	{
-		faces.add(faceToAdd);
+		this.faces.add(faceToAdd);
 	}
 	
 	/**
@@ -45,45 +44,36 @@ public class Mesh
 	 * @return the subdivided mesh
 	 */
 	public Mesh subdivide()
-	{		
-		System.out.println("Mesh.subdivide");
-		
+	{				
 		ArrayList<Vertex> vertexPoints = new ArrayList<Vertex>();  
-		Mesh newMesh = new Mesh("Catmull-Clark Mesh");
-		
-		// 
+		Mesh newMesh = new Mesh("Subdivided Cube");
+				
 		// calculate the face points
-		// 			_ _ _ 
-		//			 !			!
-		//			!         !
-		//       !  X   X  !
-		//        !   ^   !
-		//          !!!!!
-		//
-		// ÁERROR! ÁERROR! ÁERROR!
-		//
-		for (int i = 0; i < faces.size(); i++) faces.get(i).calculateFacePoint();
+		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateFacePoint();
 		
 		// calculate the edge points
 		this.calculateEdgePoints();	
 		
 		// get the vertex points
-		for (int i = 0; i < faces.size(); i++) 
+		for (int i = 0; i < this.faces.size(); i++) 
 		{
-			for (int j = 0; j < faces.get(j).getVertices().size(); j++) 
+			for (int j = 0; j < this.faces.get(j).getVertices().size(); j++) 
 			{
-				Vertex vertexPoint = Face.getVertexPoint(faces.get(i).getVertices().get(j));
+				Vertex vertexPoint = Face.getVertexPoint(this.faces.get(i).getVertices().get(j));
 				if(!vertexPoints.contains(vertexPoint)) vertexPoints.add(vertexPoint); // check if already calculated
 			}
 		}	
-		
+				
 		// we have the points, create the new faces
-		for (int i = 0; i < faces.size(); i++) 
+		for (int k = 0; k < this.faces.size(); k++) 
 		{
-			System.out.println("faces.get(i): " + faces.get(i));
+			ArrayList<Face> newFaces = this.faces.get(k).createNewFaces();
 			
-			ArrayList<Face> newFaces = faces.get(i).createNewFaces();
-			for (int j = 0; j < newFaces.size(); j++) newMesh.addFace(newFaces.get(j)); // add new face to newMesh 
+			for (int l = 0; l < newFaces.size(); l++) 
+			{
+				newMesh.addFace(newFaces.get(l)); // add new face to newMesh 
+			}
+			
 		}
 		
 		return newMesh;
@@ -94,10 +84,10 @@ public class Mesh
 	 * also works out the vertex valence as we go
 	 */
 	private void calculateEdgePoints()
-	{
-		for (int i = 0; i < faces.size(); i++) 
+	{		
+		for (int i = 0; i < this.faces.size(); i++) 
 		{
-			Face face = faces.get(i);
+			Face face = this.faces.get(i);
 			for (int j = 0; j < face.getEdges().size(); j++) 
 			{
 				Edge edge = face.getEdges().get(j); 
@@ -116,21 +106,19 @@ public class Mesh
 	 * which faces wing which edges
 	 */
 	public void calculateWingingFaces()
-	{		
-		System.out.println("Mesh.calculateWingingFaces: f:" + faces.size());
-		
-		for (int i = 0; i < faces.size(); i++)
+	{				
+		for (int i = 0; i < this.faces.size(); i++)
 		{
-			Face currentFace = faces.get(i);
+			Face currentFace = this.faces.get(i);
 			
 			for (int j = 0; j < currentFace.getEdges().size(); j++)
 			{
 				Edge currentEdge = currentFace.getEdges().get(j);
 				
 				// loop through faces again, looking for other face that contains 'edge'
-				for (int k = 0; k < faces.size(); k++)
+				for (int k = 0; k < this.faces.size(); k++)
 				{
-					Face comparisonFace = faces.get(k);
+					Face comparisonFace = this.faces.get(k);
 					
 					if(comparisonFace.getEdge(currentEdge) != null && comparisonFace != currentFace) 
 						currentEdge.addWingedFaces(currentFace, comparisonFace);
@@ -144,12 +132,10 @@ public class Mesh
 	 * @param gl a reference to the GL2 object
 	 */
 	public void draw(GL2 gl)
-	{			
-		System.out.println("Mesh.draw: " + this.name);
-		
-		for (int i = 0; i < faces.size(); i++)
-		{
-			Face face = faces.get(i);
+	{					
+		for (int i = 0; i < this.faces.size(); i++)
+		{			
+			Face face = this.faces.get(i);
 			
 			gl.glBegin(GL2.GL_TRIANGLES);
 			
@@ -165,20 +151,20 @@ public class Mesh
 	 */
 	public void print()
 	{
-		for (int i = 0; i < faces.size(); i++)
+		for (int i = 0; i < this.faces.size(); i++)
 		{
 			System.out.println("Face " + (i+1) + ": ");
-			faces.get(i).print();
+			this.faces.get(i).print();
 		}
 	}
 	
 	// public getters/setters
 	
-	public static Edge getEdge(Edge e)
+	public Edge getEdge(Edge e)
 	{
-		for (int i = 0; i < faces.size(); i++) return faces.get(i).getEdge(e);
+		for (int i = 0; i < this.faces.size(); i++) return this.faces.get(i).getEdge(e);
 		return null;
 	}
 	
-	public ArrayList<Face> getFaces() { return faces; }
+	public ArrayList<Face> getFaces() { return this.faces; }
 }

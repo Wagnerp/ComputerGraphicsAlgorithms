@@ -120,13 +120,11 @@ public class Face
 	 * @return list of new faces (one face per vertex)
 	 */
 	public ArrayList<Face> createNewFaces()
-	{
-		System.out.println("Face.createNewFaces: " + this);
-		
+	{				
 		ArrayList<Face> newFaces = new ArrayList<Face>(); 
 		
 		for (int i = 0; i < this.getVertices().size(); i++)
-		{
+		{			
 			Vertex vertexPoint = this.getVertices().get(i);
 			Vertex edge1Point = null, edge2Point = null;
 			Edge e1, e2, e3, e4;
@@ -140,23 +138,28 @@ public class Face
 					if(edge1Point == null) edge1Point = incidentEdge.getEdgePoint();
 					else edge2Point = incidentEdge.getEdgePoint();
 				}  
-			}
+			}	
 			
-			if(edge1Point == null || edge2Point == null) 
-				System.out.println("Face.createNewFaces: One of the edge points is null, something's gone screwy...");
+			e1 = new Edge(vertexPoint, edge1Point, null);
+			e2 = new Edge(edge1Point, this.facePoint, null);
+			e3 = new Edge(this.facePoint, edge2Point, null);
+			e4 = new Edge(edge2Point, vertexPoint, null);
 			
-			e1 = new Edge(vertexPoint, edge1Point);
-			e2 = new Edge(edge1Point, this.facePoint);
-			e3 = new Edge(this.facePoint, edge2Point);
-			e4 = new Edge(edge2Point, vertexPoint);
+			//
+			// 			_ _ _ 
+			//			 !			!
+			//			!         !
+			//       !  X   X  !
+			//        !   ^   !
+			//          !!!!!
+			//
+			//  ÁSCHOOLBOY ERROR ALERT!
+			//
+			// Note to self: edgeDir has 4 bytes
+			//
+			edgeDir = new byte[] {0,0,0,0};
 			
-			edgeDir = new byte[] {0,0,0};
-			
-			newFaces.add(new Face(e1, e2, e3, e4, edgeDir, ""));
-			
-			vertexPoint.print();
-			edge1Point.print();
-			edge2Point.print();
+			newFaces.add(new Face(e1, e2, e3, e4, edgeDir, ""));			
 		}
 		
 		return newFaces;
@@ -225,14 +228,9 @@ public class Face
 	}
 	
 	public ArrayList<Vertex> getVertices() 
-	{ 
+	{ 				
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-		
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
-		}
-		
+		for (int i = 0; i < this.edges.size(); i++) vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
 		return vertices; 
 	}
 	

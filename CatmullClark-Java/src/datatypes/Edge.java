@@ -31,13 +31,7 @@ public class Edge
 	{
 		this.vertices.add(_startPoint);
 		this.vertices.add(_endPoint);
-		this.id = _id;
-	}
-	public Edge(Vertex _startPoint, Vertex _endPoint)
-	{
-		System.out.println("Edge.Edge: " + _startPoint + "-" + _endPoint);
-		
-		new Edge(_startPoint, _endPoint, "no_id");
+		this.id = _id;		
 	}
 	
 	/**
@@ -102,11 +96,13 @@ public class Edge
 	 */
 	public void print()
 	{
+		System.out.println("Edge.print: " + this);
+		
 		System.out.println("Vertex 1: ");
-		vertices.get(0).print();
+		this.vertices.get(0).print();
 		
 		System.out.println("Vertex 2: ");
-		vertices.get(1).print();
+		this.vertices.get(1).print();
 	}
 	
 	// public getters/setters
@@ -125,6 +121,6 @@ public class Edge
 	 */
 	public Edge getInvert()
 	{
-		return new Edge(this.vertices.get(1), this.vertices.get(0));
+		return new Edge(this.vertices.get(1), this.vertices.get(0), null);
 	}
 }

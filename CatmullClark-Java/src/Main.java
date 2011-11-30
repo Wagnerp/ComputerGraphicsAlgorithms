@@ -42,9 +42,9 @@ public class Main implements GLEventListener, KeyListener
 	private static JFrame frame;
 	
 	// the cube object
-	private static Mesh cube;
+	private static Mesh cube = new Mesh("Cube");
 	// the subdivided cube object
-	private static Mesh subdividedCube;
+	private static Mesh subdividedCube = new Mesh("Subdivided Cube");
 
 	public static void main(String[] args)
 	{
@@ -117,7 +117,7 @@ public class Main implements GLEventListener, KeyListener
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = subdividedCube.subdivide();
+				subdividedCube = cube.subdivide();
 				showSubdividedMesh = true;
 				break;
 			case 'a':
@@ -173,9 +173,7 @@ public class Main implements GLEventListener, KeyListener
 		Edge e16 = new Edge(v4, v5, "e16");
 		Edge e17 = new Edge(v2, v8, "e17");
 		Edge e18 = new Edge(v6, v4, "e18");
-					
-		// Hide some code in the Mesh class
-		cube = subdividedCube = new Mesh("Cube");
+		
 		// front face
 		cube.addFace(new Face(e1, e2, e3,    new byte[]{0,0,0},"fr1")); 
 		cube.addFace(new Face(e3, e4, e5,    new byte[]{1,0,0},"fr2"));
@@ -196,6 +194,7 @@ public class Main implements GLEventListener, KeyListener
 		cube.addFace(new Face(e18, e6, e16,  new byte[]{1,1,1},"ri2"));
 	}
 	
+	@SuppressWarnings("unused")
 	private static void setTriangleDataPyramid()
 	{
 		Vertex v1 = new Vertex(-1.0f, 0.0f, 0.0f);
@@ -203,12 +202,12 @@ public class Main implements GLEventListener, KeyListener
 		Vertex v3 = new Vertex(1.0f, 0.0f, -1.0f);
 		Vertex v4 = new Vertex(0.0f, 2.0f, 0.0f);
 		
-		Edge e1 = new Edge(v1, v4);
-		Edge e2 = new Edge(v2, v4);
-		Edge e3 = new Edge(v3, v4);
-		Edge e4 = new Edge(v1, v2);
-		Edge e5 = new Edge(v2, v3);
-		Edge e6 = new Edge(v3, v1);
+		Edge e1 = new Edge(v1, v4, null);
+		Edge e2 = new Edge(v2, v4, null);
+		Edge e3 = new Edge(v3, v4, null);
+		Edge e4 = new Edge(v1, v2, null);
+		Edge e5 = new Edge(v2, v3, null);
+		Edge e6 = new Edge(v3, v1, null);
 					
 		// Hide some code in the Mesh class
 		cube = new Mesh("Pyramid");
