@@ -261,9 +261,9 @@ public class Face
 			Vertex.add(edge.getMidPoint(), epAvg);
 		}
 
-		fpAvg = Vertex.divide(fpAvg, vertValence);
+		//fpAvg = Vertex.divide(fpAvg, vertValence);
 
-		epAvg = Vertex.divide(epAvg, vertValence);
+		//epAvg = Vertex.divide(epAvg, vertValence);
 		epAvg = Vertex.multiply(epAvg, 2);
 
 		vertValenceSum = Vertex.multiply(oldVertexPoint, (vertValence-3));

@@ -25,7 +25,7 @@ import datatypes.Vertex;
 public class Main implements GLEventListener, KeyListener
 {
 	// Some basic window/display options
-	private static final String WINDOW_TITLE = "Butterfly Subdivision";
+	private static final String WINDOW_TITLE = "Catmull-Clark Subdivision";
 	private static final int WIDTH = 1024;
 	private static final int HEIGHT = 768;
 	private static final int FRAMERATE = 30;
@@ -38,6 +38,8 @@ public class Main implements GLEventListener, KeyListener
 	
 	private static Boolean rotate = true;	
 	private static Boolean showSubdividedMesh = false;	
+	private enum DrawMode { LINE, FILL, POINT; }
+	private static DrawMode drawMode = DrawMode.FILL;
 	
 	private static JFrame frame;
 	
@@ -59,9 +61,9 @@ public class Main implements GLEventListener, KeyListener
 		animator.add(canvas);
 		animator.start();
 		
-		setTriangleDataSmall();
+//		setTriangleDataSmall();
 //		setTriangleDataBig();
-//		setTriangleDataPyramid();
+		setTriangleDataPyramid();
 
 		// initially calculate the winged edges
 		cube.calculateWingingFaces();
@@ -75,10 +77,24 @@ public class Main implements GLEventListener, KeyListener
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
 		gl.glTranslatef(0.0f, 0.0f, -5.0f);
+		gl.glPointSize(5.0f);
 
 		// Rotate The cube around the y axis
 		gl.glRotatef(rotation, 0.0f, 1.0f, 0.0f);
 		gl.glRotatef(rotation, 1.0f, 1.0f, 1.0f);
+		
+		switch(drawMode)
+		{
+			case FILL:
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL); 
+				break;
+			case LINE:
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE); 
+				break;
+			case POINT:
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_POINT); 
+				break;
+		}
 		
 		// decide which mesh to draw
 		if(!showSubdividedMesh) cube.draw(gl);
@@ -133,8 +149,21 @@ public class Main implements GLEventListener, KeyListener
 				break;
 			case '=':
 				if(rotationSpeed < 5.00) rotationSpeed += ROTATION_INCREMENT;
+			case ' ':
+				switch(drawMode)
+				{
+					case FILL:
+						drawMode = DrawMode.LINE;
+						break;
+					case LINE:
+						drawMode = DrawMode.POINT;
+						break;
+					case POINT:
+						drawMode = DrawMode.FILL;
+						break;
+				}
 			default:
-				//System.out.println("'" + e.getKeyChar() + "' not mapped");
+				System.out.println("'" + e.getKeyChar() + "' not mapped");
 				break;
 		}
 	}
