@@ -26,9 +26,9 @@ public class Face
 	* (populated by getVertices(), to avoid unnecessary loopage) */
 	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	// the RGB value of the face's colour
-	private byte[] colour = new byte[4];
+	private byte[] colour;
 	// holds the direction of each edge
-	private byte[] edgeDirection = new byte[4];
+	private byte[] edgeDirection;
 	private Vertex facePoint;
 	
 	private String id = "";
@@ -47,6 +47,7 @@ public class Face
 		
 		// randomly generate a colour
 		Random r = new Random();
+		this.colour = new byte[3];
 		this.colour[0] = (byte)(r.nextInt(254)+1);
 		this.colour[1] = (byte)(r.nextInt(254)+1);
 		this.colour[2] = (byte)(r.nextInt(254)+1);
@@ -72,6 +73,7 @@ public class Face
 		
 		// randomly generate a colour
 		Random r = new Random();
+		this.colour = new byte[4];
 		this.colour[0] = (byte)(r.nextInt(254)+1);
 		this.colour[1] = (byte)(r.nextInt(254)+1);
 		this.colour[2] = (byte)(r.nextInt(254)+1);
