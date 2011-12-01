@@ -164,7 +164,7 @@ public class Main implements GLEventListener, KeyListener
 				if(rotationSpeed < 5.00) rotationSpeed += ROTATION_INCREMENT;
 				break;
 			default:
-				System.out.println("'" + e.getKeyChar() + "' not mapped");
+//				System.out.println("'" + e.getKeyChar() + "' not mapped");
 				break;
 		}
 	}
