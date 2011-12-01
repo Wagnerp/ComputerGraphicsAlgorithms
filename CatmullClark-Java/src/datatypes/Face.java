@@ -86,6 +86,7 @@ public class Face
 	{				
 		// draw in an anti-clockwise fashion 
 		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
+		if(this.edges.size() == 4) this.edges.get(3).getVertices().get(edgeDirection[3]).draw(gl);
 		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(gl);
 		this.edges.get(1).getVertices().get(edgeDirection[1]).draw(gl);
 	}

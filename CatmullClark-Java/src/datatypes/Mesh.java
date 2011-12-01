@@ -137,8 +137,9 @@ public class Mesh
 		{			
 			Face face = this.faces.get(i);
 			
-			gl.glBegin(GL2.GL_TRIANGLES);
-			
+			if(face.getVertices().size() == 3) gl.glBegin(GL2.GL_TRIANGLES);
+			else if(face.getVertices().size() == 4) gl.glBegin(GL2.GL_QUADS);
+						
 			gl.glColor3ub(face.getColour()[0], face.getColour()[1], face.getColour()[2]);
 			face.draw(gl);
 			
