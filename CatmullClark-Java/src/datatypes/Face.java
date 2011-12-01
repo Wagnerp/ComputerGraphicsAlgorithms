@@ -22,6 +22,9 @@ public class Face
 {
 	// the edges in the face
 	private ArrayList<Edge> edges = new ArrayList<Edge>();
+  /* the vertices in the face
+	* (populated by getVertices(), to avoid unnecessary loopage) */
+	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 	// the RGB value of the face's colour
 	private byte[] colour = new byte[4];
 	// holds the direction of each edge
@@ -230,9 +233,9 @@ public class Face
 	
 	public ArrayList<Vertex> getVertices() 
 	{ 				
-		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-		for (int i = 0; i < this.edges.size(); i++) vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
-		return vertices; 
+		if(this.vertices.size() < 1) System.out.println("Face.getVertices: Need to populate vertices");
+		if(this.vertices.size() < 1) for (int i = 0; i < this.edges.size(); i++) this.vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
+		return this.vertices; 
 	}
 	
 	/**
