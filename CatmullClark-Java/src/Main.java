@@ -61,9 +61,8 @@ public class Main implements GLEventListener, KeyListener
 		animator.add(canvas);
 		animator.start();
 		
-//		setTriangleDataSmall();
-//		setTriangleDataBig();
-		setTriangleDataPyramid();
+		setTriangleDataSmall();
+//		setTriangleDataPyramid();
 
 		// initially calculate the winged edges
 		cube.calculateWingingFaces();
@@ -144,11 +143,13 @@ public class Main implements GLEventListener, KeyListener
 				break;
 			case 'q':
 				subdividedCube = cube;
+				break;
 			case '-':
 				if(rotationSpeed > 0.20) rotationSpeed -= ROTATION_INCREMENT;
 				break;
 			case '=':
 				if(rotationSpeed < 5.00) rotationSpeed += ROTATION_INCREMENT;
+				break;
 			case ' ':
 				switch(drawMode)
 				{
@@ -162,8 +163,9 @@ public class Main implements GLEventListener, KeyListener
 						drawMode = DrawMode.FILL;
 						break;
 				}
+				break;
 			default:
-				System.out.println("'" + e.getKeyChar() + "' not mapped");
+//				System.out.println("'" + e.getKeyChar() + "' not mapped");
 				break;
 		}
 	}
