@@ -63,7 +63,13 @@ public class Mesh
 				if(!vertexPoints.contains(vertexPoint)) vertexPoints.add(vertexPoint); // check if already calculated
 			}
 		}	
-				
+		
+		for (int i = 0; i < vertexPoints.size(); i++)
+		{
+			Vertex v1 = vertexPoints.get(i);
+			v1.print();
+		}
+		
 		// we have the points, create the new faces
 		for (int k = 0; k < this.faces.size(); k++) 
 		{

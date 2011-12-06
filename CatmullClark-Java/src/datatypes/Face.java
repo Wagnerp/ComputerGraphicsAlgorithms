@@ -130,7 +130,8 @@ public class Face
 		ArrayList<Face> newFaces = new ArrayList<Face>(); 
 		
 		for (int i = 0; i < this.getVertices().size(); i++)
-		{			
+		{	
+			// not using updated vertex point
 			Vertex vertexPoint = this.getVertices().get(i);
 			Vertex edge1Point = null, edge2Point = null;
 			Edge e1, e2, e3, e4;
@@ -254,32 +255,30 @@ public class Face
 	 */
 	public static Vertex getVertexPoint(Vertex oldVertexPoint)
 	{						
-		Vertex fpAvg = new Vertex(0,0,0); 							// average of adjacent face points
-		Vertex epAvg = new Vertex(0,0,0); 							// average of adjacent edge midpoints
-		Vertex vertValenceSum = new Vertex(0,0,0);				// vertex*(vertex valence - 3)
-		Vertex vertexPoint = new Vertex(0,0,0); 					// new vertex
+		Vertex fpAvg = new Vertex(0,0,0); 									// average of adjacent face points
+		Vertex epAvg = new Vertex(0,0,0); 									// average of adjacent edge midpoints
+		Vertex vertValenceSum = new Vertex(0,0,0);						// vertex*(vertex valence - 3)
+		Vertex vertexPoint = new Vertex(0,0,0); 							// new vertex
 		int vertValence = oldVertexPoint.getIncidentEdges().size();	// current vertex's valence
 
 		for (int l = 0; l < vertValence; l++)
 		{
 			Edge edge = oldVertexPoint.getIncidentEdges().get(l);
-			Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
-			Vertex.add(edge.getMidPoint(), epAvg);
+			
+			fpAvg = Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
+			epAvg = Vertex.add(edge.getMidPoint(), epAvg);
 		}
-
-		//fpAvg = Vertex.divide(fpAvg, vertValence);
-
-		//epAvg = Vertex.divide(epAvg, vertValence);
+		
 		epAvg = Vertex.multiply(epAvg, 2);
 
 		vertValenceSum = Vertex.multiply(oldVertexPoint, (vertValence-3));
-
+	
 		// now add the individual parts and divide by the valence
 		vertexPoint = Vertex.add(vertexPoint, fpAvg);
 		vertexPoint = Vertex.add(vertexPoint, epAvg);
 		vertexPoint = Vertex.add(vertexPoint, vertValenceSum);
 		vertexPoint = Vertex.divide(vertexPoint, vertValence);
-
+			
 		return vertexPoint;
 	}
 	
