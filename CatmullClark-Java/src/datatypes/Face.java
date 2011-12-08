@@ -9,9 +9,8 @@ import javax.media.opengl.GL2;
  * A simple object to store face information
  * So far handles tris and quads
  *
- *	TODO: Face: Move getters/setters into alphabetical order
  * TODO: Face: Move colours into an ArrayList
- * TODO: Face.Face: Come up with more elegant way to deal with tris/quads 
+ * TODO: Face: Organise getters/setters better
  *
  * @author Tom
  * @version 0.1
@@ -25,6 +24,7 @@ public class Face
   /* the vertices in the face
 	* (populated by getVertices(), to avoid unnecessary loopage) */
 	private ArrayList<Vertex> vertices = new ArrayList<Vertex>();
+	private ArrayList<Vertex> newVertices = new ArrayList<Vertex>();
 	// the RGB value of the face's colour
 	private byte[] colour;
 	// holds the direction of each edge
@@ -83,6 +83,24 @@ public class Face
 		this.id = _id;
 	}
 	
+	
+	public void calculateFacePoint()
+	{
+		ArrayList<Vertex> faceVertices = this.getVertices();		
+		Vertex sum = new Vertex(0,0,0);
+		
+		// sum up the vertices
+		for (int j = 0; j < faceVertices.size(); j++) sum = Vertex.add(faceVertices.get(j), sum);
+		
+		// get the average
+		this.facePoint = Vertex.divide(sum, faceVertices.size());
+	}
+	
+	public void calculateVertexPoints()
+	{
+		for (int i = 0; i < this.vertices.size(); i++) this.newVertices.add(Face.getVertexPoint(this.vertices.get(i)));
+	}
+	
 	/**
 	 * Draws each edge
 	 * @param gl
@@ -108,71 +126,16 @@ public class Face
 		}
 	}
 	
-	public void calculateFacePoint()
-	{
-		ArrayList<Vertex> faceVertices = this.getVertices();		
-		Vertex sum = new Vertex(0,0,0);
-		
-		// sum up the vertices
-		for (int j = 0; j < faceVertices.size(); j++) sum = Vertex.add(faceVertices.get(j), sum);
-		
-		// get the average
-		this.facePoint = Vertex.divide(sum, faceVertices.size());
-	}
-	
-	/**
-	 * Build a list of new faces using the
-	 * edge, vertex and face points
-	 * @return list of new faces (one face per vertex)
+	/*
+	 * public getters/setters
+	 * 
+	 * A bit messy as most of these methods have a fair 
+	 * bit of code
+	 * 
+	 * Put them in alphabetical order for easier navigation
 	 */
-	public ArrayList<Face> createNewFaces()
-	{				
-		ArrayList<Face> newFaces = new ArrayList<Face>(); 
-		
-		for (int i = 0; i < this.getVertices().size(); i++)
-		{	
-			// not using updated vertex point
-			Vertex vertexPoint = this.getVertices().get(i);
-			Vertex edge1Point = null, edge2Point = null;
-			Edge e1, e2, e3, e4;
-			byte[] edgeDir = new byte[3]; 
-
-			for (int j = 0; j < vertexPoint.getIncidentEdges().size(); j++)
-			{
-				Edge incidentEdge = this.getEdge(vertexPoint.getIncidentEdges().get(j));
-				if(incidentEdge != null) 
-				{
-					if(edge1Point == null) edge1Point = incidentEdge.getEdgePoint();
-					else edge2Point = incidentEdge.getEdgePoint();
-				}  
-			}	
-			
-			e1 = new Edge(vertexPoint, edge1Point, null);
-			e2 = new Edge(edge1Point, this.facePoint, null);
-			e3 = new Edge(this.facePoint, edge2Point, null);
-			e4 = new Edge(edge2Point, vertexPoint, null);
-			
-			//
-			// 			_ _ _ 
-			//			 !			!
-			//			!         !
-			//       !  X   X  !
-			//        !   ^   !
-			//          !!!!!
-			//
-			//  ÁSCHOOLBOY ERROR ALERT!
-			//
-			// Note to self: edgeDir has 4 bytes
-			//
-			edgeDir = new byte[] {0,0,0,0};
-			
-			newFaces.add(new Face(e1, e2, e3, e4, edgeDir, ""));			
-		}
-		
-		return newFaces;
-	}
 	
-	//	public getters/setters
+	public byte[] getColour() { return this.colour; }
 	
 	/**
 	 * Gets the edge from it's vertices
@@ -188,6 +151,7 @@ public class Face
 		} 
 		return null; 
 	}
+	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
 	
 	/**
 	 * Returns the edges other than the passed edge
@@ -205,6 +169,18 @@ public class Face
 		}
 		
 		return otherEdges; 
+	}
+	public ArrayList<Edge> getEdges() { return this.edges; }
+	
+	public byte[] getEdgeDirections() { return this.edgeDirection; }
+	public Vertex getFacePoint() { return this.facePoint; }
+	public String getId() { return this.id; }
+	
+	public ArrayList<Vertex> getNewVertices()
+	{
+		System.out.println("Face.getNewVertices: " + this.newVertices.size());
+		if(this.newVertices == null) this.calculateVertexPoints();
+		return this.newVertices;
 	}
 	
 	/**
@@ -236,7 +212,6 @@ public class Face
 	
 	public ArrayList<Vertex> getVertices() 
 	{ 				
-		if(this.vertices.size() < 1) System.out.println("Face.getVertices: Need to populate vertices");
 		if(this.vertices.size() < 1) for (int i = 0; i < this.edges.size(); i++) this.vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
 		return this.vertices; 
 	}
@@ -281,11 +256,4 @@ public class Face
 			
 		return vertexPoint;
 	}
-	
-	public byte[] getColour() { return this.colour; }
-	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
-	public ArrayList<Edge> getEdges() { return this.edges; }
-	public byte[] getEdgeDirections() { return this.edgeDirection; }
-	public Vertex getFacePoint() { return this.facePoint; }
-	public String getId() { return this.id; }
 }

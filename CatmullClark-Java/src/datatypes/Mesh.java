@@ -45,8 +45,7 @@ public class Mesh
 	 */
 	public Mesh subdivide()
 	{				
-		ArrayList<Vertex> vertexPoints = new ArrayList<Vertex>();  
-		Mesh newMesh = new Mesh("Subdivided Cube");
+		//Mesh newMesh = new Mesh("Subdivided Cube");
 				
 		// calculate the face points
 		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateFacePoint();
@@ -55,34 +54,9 @@ public class Mesh
 		this.calculateEdgePoints();	
 		
 		// get the vertex points
-		for (int i = 0; i < this.faces.size(); i++) 
-		{
-			for (int j = 0; j < this.faces.get(j).getVertices().size(); j++) 
-			{
-				Vertex vertexPoint = Face.getVertexPoint(this.faces.get(i).getVertices().get(j));
-				if(!vertexPoints.contains(vertexPoint)) vertexPoints.add(vertexPoint); // check if already calculated
-			}
-		}	
-		
-		for (int i = 0; i < vertexPoints.size(); i++)
-		{
-			Vertex v1 = vertexPoints.get(i);
-			v1.print();
-		}
-		
-		// we have the points, create the new faces
-		for (int k = 0; k < this.faces.size(); k++) 
-		{
-			ArrayList<Face> newFaces = this.faces.get(k).createNewFaces();
-			
-			for (int l = 0; l < newFaces.size(); l++) 
-			{
-				newMesh.addFace(newFaces.get(l)); // add new face to newMesh 
-			}
-			
-		}
-		
-		return newMesh;
+		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateVertexPoints();
+
+		return this.createNewFaces();		
 	}
 
 	/**
@@ -131,6 +105,114 @@ public class Mesh
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Build a list of new faces using the
+	 * edge, vertex and face points
+	 * @return list of new faces (one face per vertex)
+	 */
+	private Mesh createNewFaces()
+	{				
+		Mesh mesh = new Mesh("Subdivided Cube");
+		
+		for (int i = 0; i < this.faces.size(); i++)
+		{
+			Face face = this.faces.get(i);
+			
+			for (int j = 0; j < face.getNewVertices().size(); j++)
+			{
+//				Vertex vertexPoint = face.getNewVertices().get(j);
+				Vertex vertexPoint = face.getVertices().get(j);
+			
+				// !!!!!				
+				
+				Vertex edge1Point = null, edge2Point = null;
+				Edge e1, e2, e3, e4;
+
+				for (int k = 0; k < vertexPoint.getIncidentEdges().size(); k++)
+				{
+					Edge incidentEdge = face.getEdge(vertexPoint.getIncidentEdges().get(k));
+					if (incidentEdge != null)
+					{
+						if (edge1Point == null) edge1Point = incidentEdge.getEdgePoint();
+						else edge2Point = incidentEdge.getEdgePoint();
+					}
+				}
+
+				// create the four edges using the points
+				e1 = new Edge(vertexPoint, edge1Point, null);
+				e2 = new Edge(edge1Point, face.getFacePoint(), null);
+				e3 = new Edge(face.getFacePoint(), edge2Point, null);
+				e4 = new Edge(edge2Point, vertexPoint, null);
+
+				//
+				//          _ _ _ 
+				//        !       !
+				//       !         !
+				//       !  X   X  !
+				//        !   ^   !
+				//          |||||
+				//
+				//  |SCHOOLBOY ERROR ALERT|
+				//
+				// Note to self: edgeDir has 4 bytes
+				//
+//				int ed1 = (mesh.getEdge(e1) == null) ? 0 : 1;
+//				int ed2 = (mesh.getEdge(e2) == null) ? 0 : 1;
+//				int ed3 = (mesh.getEdge(e3) == null) ? 0 : 1;
+//				int ed4 = (mesh.getEdge(e4) == null) ? 0 : 1;
+				
+//				int ed1, ed2, ed3, ed4;
+//				
+//				if(mesh.getEdge(e1) == null) ed1 = 0;
+//				else
+//				{
+//					ed1 = 1;
+//					//System.out.print("ed1: "); e1.print();
+//				}
+//				if(mesh.getEdge(e2) == null) ed2 = 0;
+//				else
+//				{
+//					ed2 = 1;
+////					System.out.print("ed2: "); e2.print();
+//				}
+//				if(mesh.getEdge(e3) == null) ed3 = 0;
+//				else
+//				{
+//					ed3 = 1;
+////					System.out.print("ed3: "); e3.print();
+//				}
+//				if(mesh.getEdge(e4) == null) ed4 = 0;
+//				else
+//				{
+//					ed4 = 1;
+////					System.out.print("ed4: "); e4.print();
+//				}
+//				
+//				byte[] edgeDir = new byte[] { (byte)ed1, (byte)ed2, (byte)ed3, (byte)ed4 };
+//				
+//				if(j == 0) 
+//				{
+//					edgeDir = new byte[] {0,0,0,0};
+//				}
+//				else if(j == 1) 
+//				{
+//					edgeDir = new byte[] {1,0,0,0};
+//				}
+//				else if(j == 2) 
+//				{
+//					edgeDir = new byte[] {1,1,0,1};
+//				}
+				
+				byte[] edgeDir = new byte[] {0,0,0,0};
+				
+				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "] vertex valence: " + vertexPoint.getIncidentEdges().size()); 
+				
+				mesh.addFace(new Face(e1, e2, e3, e4, edgeDir, ""));
+			}
+		}
+		return mesh;
 	}
 
 	/**
