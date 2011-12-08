@@ -19,19 +19,16 @@ public class Edge
 	private Face[] wingedFaces = new Face[2];
 	// used when subdividing...
 	private Vertex edgePoint = null;
-	// label - just to help with debugging
-	private String id = "";
 	
 	/**
 	 * Constructor
 	 * @param _startPoint
 	 * @param _endPoint
 	 */
-	public Edge(Vertex _startPoint, Vertex _endPoint, String _id)
+	public Edge(Vertex _startPoint, Vertex _endPoint)
 	{
 		this.vertices.add(_startPoint);
 		this.vertices.add(_endPoint);
-		this.id = _id;		
 	}
 	
 	/**
@@ -109,12 +106,11 @@ public class Edge
 	public Vertex getEdgePoint() { return this.edgePoint; }
 	// just adds the two vertices and divides by two to get the avg.
 	public Vertex getMidPoint() { return Vertex.divide(Vertex.add(this.getVertices().get(0), this.getVertices().get(1)),2); }
-	public String getId() { return this.id; }
 	public ArrayList<Vertex> getVertices() { return this.vertices; }
 	public Face[] getWingedFaces() { return this.wingedFaces; }
 	/**
 	 * Inverts the vertices of this edge
 	 * @return the inverted edge
 	 */
-	public Edge getInvert() { return new Edge(this.vertices.get(1), this.vertices.get(0), null); }
+	public Edge getInvert() { return new Edge(this.vertices.get(1), this.vertices.get(0)); }
 }

@@ -30,16 +30,14 @@ public class Face
 	// holds the direction of each edge
 	private byte[] edgeDirection;
 	private Vertex facePoint;
-	
-	private String id = "";
-			
+				
 	/**
 	 * Constructor - tri
 	 * @param _edge1
 	 * @param _edge2
 	 * @param _edge3
 	 */
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] edgeDir, String _id)
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] edgeDir)
 	{		
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
@@ -53,7 +51,6 @@ public class Face
 		this.colour[2] = (byte)(r.nextInt(254)+1);
 		
 		this.edgeDirection = edgeDir;		
-		this.id = _id;
 	}
 	
 	/**
@@ -64,7 +61,7 @@ public class Face
 	 * @param edgeDir
 	 * @param _id
 	 */
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4, byte[] edgeDir, String _id)
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4, byte[] edgeDir)
 	{		
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
@@ -80,7 +77,6 @@ public class Face
 		this.colour[3] = (byte)(r.nextInt(254)+1);
 		
 		this.edgeDirection = edgeDir;		
-		this.id = _id;
 	}
 	
 	
@@ -174,7 +170,6 @@ public class Face
 	
 	public byte[] getEdgeDirections() { return this.edgeDirection; }
 	public Vertex getFacePoint() { return this.facePoint; }
-	public String getId() { return this.id; }
 	
 	public ArrayList<Vertex> getNewVertices()
 	{
