@@ -218,13 +218,14 @@ public class Face
 	 * 					vertex valence
 	 */
 	public static Vertex getVertexPoint(Vertex oldVertexPoint)
-	{						
-		Vertex fpAvg = new Vertex(0,0,0); 									// average of adjacent face points
-		Vertex epAvg = new Vertex(0,0,0); 									// average of adjacent edge midpoints
-		Vertex vertValenceSum = new Vertex(0,0,0);						// vertex*(vertex valence - 3)
+	{		
+		Vertex fpAvg = new Vertex(0,0,0); 									// average of incident face points
+		Vertex epAvg = new Vertex(0,0,0); 									// average of incident edge midpoints
 		Vertex vertexPoint = new Vertex(0,0,0); 							// new vertex
-		int vertValence = oldVertexPoint.getIncidentEdges().size();	// current vertex's valence
-
+		int vertValence = oldVertexPoint.getIncidentEdges().size();	// number of edges incident on current vertex
+		
+		// add the face points together
+		// add the edge points together 
 		for (int l = 0; l < vertValence; l++)
 		{
 			Edge edge = oldVertexPoint.getIncidentEdges().get(l);
@@ -233,16 +234,18 @@ public class Face
 			epAvg = Vertex.add(edge.getMidPoint(), epAvg);
 		}
 		
-		epAvg = Vertex.multiply(epAvg, 2);
-
-		vertValenceSum = Vertex.multiply(oldVertexPoint, (vertValence-3));
-	
-		// now add the individual parts and divide by the valence
+		// get the averages
+		fpAvg = Vertex.divide(fpAvg, vertValence);
+		epAvg = Vertex.divide(epAvg, vertValence);
+		
+		// multiply the vertices according to the algorithm (fpAvg * (1/vertValence))
+		fpAvg = Vertex.multiply(fpAvg, (double)1/vertValence);
+		epAvg = Vertex.multiply(epAvg, (double)2/vertValence);
+		vertexPoint = Vertex.multiply(oldVertexPoint, (double)(vertValence-3)/vertValence);
+		
 		vertexPoint = Vertex.add(vertexPoint, fpAvg);
 		vertexPoint = Vertex.add(vertexPoint, epAvg);
-		vertexPoint = Vertex.add(vertexPoint, vertValenceSum);
-		vertexPoint = Vertex.divide(vertexPoint, vertValence);
-			
+
 		return vertexPoint;
 	}
 	

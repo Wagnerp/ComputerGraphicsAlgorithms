@@ -119,32 +119,32 @@ public class Mesh
 		for (int i = 0; i < this.faces.size(); i++)
 		{
 			Face face = this.faces.get(i);
-			
-			for (int j = 0; j < face.getNewVertices().size(); j++)
+			ArrayList<Vertex> newVertices = face.getNewVertices(); 
+						
+			for (int j = 0; j < newVertices.size(); j++)
 			{
-//				Vertex vertexPoint = face.getNewVertices().get(j);
-				Vertex vertexPoint = face.getVertices().get(j);
-			
-				// !!!!!				
-				
+				Vertex oldVertexPoint = face.getVertices().get(j);;
+				Vertex newVertexPoint = newVertices.get(j);
+							
 				Vertex edge1Point = null, edge2Point = null;
 				Edge e1, e2, e3, e4;
 
-				for (int k = 0; k < vertexPoint.getIncidentEdges().size(); k++)
+				for (int k = 0; k < oldVertexPoint.getIncidentEdges().size(); k++)
 				{
-					Edge incidentEdge = face.getEdge(vertexPoint.getIncidentEdges().get(k));
+					Edge incidentEdge = face.getEdge(oldVertexPoint.getIncidentEdges().get(k));
 					if (incidentEdge != null)
 					{
 						if (edge1Point == null) edge1Point = incidentEdge.getEdgePoint();
 						else edge2Point = incidentEdge.getEdgePoint();
 					}
+					//else System.out.println("incidentEdge is null");
 				}
 
 				// create the four edges using the points
-				e1 = new Edge(vertexPoint, edge1Point, null);
-				e2 = new Edge(edge1Point, face.getFacePoint(), null);
-				e3 = new Edge(face.getFacePoint(), edge2Point, null);
-				e4 = new Edge(edge2Point, vertexPoint, null);
+				e1 = new Edge(newVertexPoint, edge1Point);
+				e2 = new Edge(edge1Point, face.getFacePoint());
+				e3 = new Edge(face.getFacePoint(), edge2Point);
+				e4 = new Edge(edge2Point, newVertexPoint);
 
 				//
 				//          _ _ _ 
@@ -169,25 +169,25 @@ public class Mesh
 //				else
 //				{
 //					ed1 = 1;
-//					//System.out.print("ed1: "); e1.print();
+//					System.out.print("ed1: "); e1.print();
 //				}
 //				if(mesh.getEdge(e2) == null) ed2 = 0;
 //				else
 //				{
 //					ed2 = 1;
-////					System.out.print("ed2: "); e2.print();
+//					System.out.print("ed2: "); e2.print();
 //				}
 //				if(mesh.getEdge(e3) == null) ed3 = 0;
 //				else
 //				{
 //					ed3 = 1;
-////					System.out.print("ed3: "); e3.print();
+//					System.out.print("ed3: "); e3.print();
 //				}
 //				if(mesh.getEdge(e4) == null) ed4 = 0;
 //				else
 //				{
 //					ed4 = 1;
-////					System.out.print("ed4: "); e4.print();
+//					System.out.print("ed4: "); e4.print();
 //				}
 //				
 //				byte[] edgeDir = new byte[] { (byte)ed1, (byte)ed2, (byte)ed3, (byte)ed4 };
@@ -206,10 +206,9 @@ public class Mesh
 //				}
 				
 				byte[] edgeDir = new byte[] {0,0,0,0};
-				
-				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "] vertex valence: " + vertexPoint.getIncidentEdges().size()); 
-				
-				mesh.addFace(new Face(e1, e2, e3, e4, edgeDir, ""));
+//				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "] vertex valence: " + vertexPoint.getIncidentEdges().size()); 
+								
+				mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
 			}
 		}
 		return mesh;
