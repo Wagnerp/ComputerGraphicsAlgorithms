@@ -104,10 +104,10 @@ public class Face
 	public void draw(GL2 gl)
 	{				
 		// draw in an anti-clockwise fashion 
-		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
 		if(this.edges.size() == 4) this.edges.get(3).getVertices().get(edgeDirection[3]).draw(gl);
 		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(gl);
 		this.edges.get(1).getVertices().get(edgeDirection[1]).draw(gl);
+		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
 	}
 	
 	/**
@@ -125,10 +125,11 @@ public class Face
 	/*
 	 * public getters/setters
 	 * 
-	 * A bit messy as most of these methods have a fair 
+	 * A bit messy as some of these methods have a fair 
 	 * bit of code
 	 * 
 	 * Put them in alphabetical order for easier navigation
+	 * in eclipse/IDEs with outline view.
 	 */
 	
 	public byte[] getColour() { return this.colour; }
@@ -149,6 +150,8 @@ public class Face
 	}
 	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
 	
+	public byte[] getEdgeDirections() { return this.edgeDirection; }
+	
 	/**
 	 * Returns the edges other than the passed edge
 	 * @param edge we don't want returned
@@ -168,13 +171,10 @@ public class Face
 	}
 	public ArrayList<Edge> getEdges() { return this.edges; }
 	
-	public byte[] getEdgeDirections() { return this.edgeDirection; }
 	public Vertex getFacePoint() { return this.facePoint; }
-	
+		
 	public ArrayList<Vertex> getNewVertices()
 	{
-		System.out.println("Face.getNewVertices: " + this.newVertices.size());
-		if(this.newVertices == null) this.calculateVertexPoints();
 		return this.newVertices;
 	}
 	
@@ -203,12 +203,6 @@ public class Face
 		}
 		
 		return null;
-	}
-	
-	public ArrayList<Vertex> getVertices() 
-	{ 				
-		if(this.vertices.size() < 1) for (int i = 0; i < this.edges.size(); i++) this.vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
-		return this.vertices; 
 	}
 	
 	/**
@@ -250,5 +244,11 @@ public class Face
 		vertexPoint = Vertex.divide(vertexPoint, vertValence);
 			
 		return vertexPoint;
+	}
+	
+	public ArrayList<Vertex> getVertices() 
+	{ 				
+		if(this.vertices.size() < 1) for (int i = 0; i < this.edges.size(); i++) this.vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));
+		return this.vertices; 
 	}
 }
