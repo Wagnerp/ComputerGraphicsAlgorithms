@@ -44,19 +44,18 @@ public class Mesh
 	 * @return the subdivided mesh
 	 */
 	public Mesh subdivide()
-	{				
-		//Mesh newMesh = new Mesh("Subdivided Cube");
-				
-		// calculate the face points
+	{						
+		System.out.println("Mesh.subdivide: " + this.name);
+		
 		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateFacePoint();
 		
-		// calculate the edge points
 		this.calculateEdgePoints();	
 		
-		// get the vertex points
 		for (int i = 0; i < this.faces.size(); i++) this.faces.get(i).calculateVertexPoints();
 
-		return this.createNewFaces();		
+		Mesh subdividedMesh = this.createNewFaces();
+		subdividedMesh.calculateWingingFaces();
+		return subdividedMesh;
 	}
 
 	/**
@@ -100,8 +99,11 @@ public class Mesh
 				{
 					Face comparisonFace = this.faces.get(k);
 					
-					if(comparisonFace.getEdge(currentEdge) != null && comparisonFace != currentFace) 
-						currentEdge.addWingedFaces(currentFace, comparisonFace);
+					if(comparisonFace != currentFace) 
+					{
+						if(comparisonFace.getEdge(currentEdge) != null)
+							currentEdge.addWingedFaces(currentFace, comparisonFace);
+					}
 				}
 			}
 		}
@@ -123,7 +125,7 @@ public class Mesh
 						
 			for (int j = 0; j < newVertices.size(); j++)
 			{
-				Vertex oldVertexPoint = face.getVertices().get(j);;
+				Vertex oldVertexPoint = face.getVertices().get(j);
 				Vertex newVertexPoint = newVertices.get(j);
 							
 				Vertex edge1Point = null, edge2Point = null;
@@ -137,7 +139,6 @@ public class Mesh
 						if (edge1Point == null) edge1Point = incidentEdge.getEdgePoint();
 						else edge2Point = incidentEdge.getEdgePoint();
 					}
-					//else System.out.println("incidentEdge is null");
 				}
 
 				// create the four edges using the points
@@ -148,67 +149,52 @@ public class Mesh
 
 				//
 				//          _ _ _ 
-				//        !       !
-				//       !         !
-				//       !  X   X  !
-				//        !   ^   !
+				//        |       |
+				//       |         |
+				//       |  X   X  |
+				//        |   ^   |
 				//          |||||
 				//
-				//  |SCHOOLBOY ERROR ALERT|
+				//  ÁSCHOOLBOY ERROR ALERT!
 				//
 				// Note to self: edgeDir has 4 bytes
 				//
-//				int ed1 = (mesh.getEdge(e1) == null) ? 0 : 1;
-//				int ed2 = (mesh.getEdge(e2) == null) ? 0 : 1;
-//				int ed3 = (mesh.getEdge(e3) == null) ? 0 : 1;
-//				int ed4 = (mesh.getEdge(e4) == null) ? 0 : 1;
+				byte edge1Obj = mesh.getEdgeDirection(e1);
+				byte edge2Obj = mesh.getEdgeDirection(e2);
+				byte edge3Obj = mesh.getEdgeDirection(e3);
+				byte edge4Obj = mesh.getEdgeDirection(e4);
 				
-//				int ed1, ed2, ed3, ed4;
-//				
-//				if(mesh.getEdge(e1) == null) ed1 = 0;
-//				else
-//				{
-//					ed1 = 1;
-//					System.out.print("ed1: "); e1.print();
-//				}
-//				if(mesh.getEdge(e2) == null) ed2 = 0;
-//				else
-//				{
-//					ed2 = 1;
-//					System.out.print("ed2: "); e2.print();
-//				}
-//				if(mesh.getEdge(e3) == null) ed3 = 0;
-//				else
-//				{
-//					ed3 = 1;
-//					System.out.print("ed3: "); e3.print();
-//				}
-//				if(mesh.getEdge(e4) == null) ed4 = 0;
-//				else
-//				{
-//					ed4 = 1;
-//					System.out.print("ed4: "); e4.print();
-//				}
-//				
-//				byte[] edgeDir = new byte[] { (byte)ed1, (byte)ed2, (byte)ed3, (byte)ed4 };
-//				
-//				if(j == 0) 
-//				{
-//					edgeDir = new byte[] {0,0,0,0};
-//				}
-//				else if(j == 1) 
-//				{
-//					edgeDir = new byte[] {1,0,0,0};
-//				}
-//				else if(j == 2) 
-//				{
-//					edgeDir = new byte[] {1,1,0,1};
-//				}
+				byte ed1, ed2, ed3, ed4;
 				
-				byte[] edgeDir = new byte[] {0,0,0,0};
-//				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "] vertex valence: " + vertexPoint.getIncidentEdges().size()); 
+				if(edge1Obj != '-') 
+				{
+					e1 = e1.getInvert();
+					ed1 = 1;
+				} else ed1 = 0;
+				
+				if(edge2Obj != '-') 
+				{
+					e2 = e2.getInvert();
+					ed2 = 1;
+				} else ed2 = 0;
+				
+				if(edge3Obj != '-') 
+				{
+					e3 = e3.getInvert();
+					ed3 = 1;
+				} else ed3 = 0;
+				
+				if(edge4Obj != '-') 
+				{
+					e4 = e4.getInvert();
+					ed4 = 1;
+				} else ed4 = 0;
+				
+				byte[] edgeDir = new byte[] {ed1,ed2,ed3,ed4};
 								
 				mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+	
+				System.out.println("edgeDir[" + ed1 + "," + ed2 + "," + ed3 + "," + ed4 + "]"); 
 			}
 		}
 		return mesh;
@@ -247,11 +233,44 @@ public class Mesh
 	}
 	
 	// public getters/setters
-	
-	public Edge getEdge(Edge e)
-	{
-		for (int i = 0; i < this.faces.size(); i++) return this.faces.get(i).getEdge(e);
-		return null;
+	public byte getEdgeDirection(Edge e)
+	{		
+		Object[] edgeObject = new Object[2];
+		
+		for (int k = 0; k < this.faces.size(); k++)
+		{
+			Face comparisonFace = this.faces.get(k);
+			
+			for (int l = 0; l < comparisonFace.getEdges().size(); l++)
+			{
+				Edge comparisonEdge = comparisonFace.getEdges().get(l);
+
+				if(
+						e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(0).getX() &&
+						e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(0).getY() &&
+						e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(0).getZ() &&
+						e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(1).getX() &&
+						e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(1).getY() &&
+						e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(1).getZ()
+					)
+				{
+					return comparisonFace.getEdgeDirections()[l];
+				}		
+				else if(
+						e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(1).getX() &&
+						e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(1).getY() &&
+						e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(1).getZ() &&
+						e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(0).getX() &&
+						e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(0).getY() &&
+						e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(0).getZ()
+						)
+				{
+					return comparisonFace.getEdgeDirections()[l];
+				}
+			}
+		}
+		
+		return '-';
 	}
 	
 	public ArrayList<Face> getFaces() { return this.faces; }

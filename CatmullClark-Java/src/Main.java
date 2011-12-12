@@ -40,13 +40,14 @@ public class Main implements GLEventListener, KeyListener
 	private static Boolean showSubdividedMesh = false;	
 	private enum DrawMode { LINE, FILL, POINT; }
 	private static DrawMode drawMode = DrawMode.FILL;
+	private static Boolean backFaceCulling = true;	
 	
 	private static JFrame frame;
 	
 	// the cube object
 	private static Mesh cube = new Mesh("Cube");
 	// the subdivided cube object
-	private static Mesh subdividedCube = new Mesh("Subdivided Cube");
+	private static Mesh subdividedCube;
 
 	public static void main(String[] args)
 	{
@@ -119,8 +120,7 @@ public class Main implements GLEventListener, KeyListener
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
-		// TODO temporary hack
-		//gl.glEnable(GL.GL_CULL_FACE);
+		if(backFaceCulling) gl.glEnable(GL.GL_CULL_FACE);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		
 		frame.addKeyListener(this);
@@ -134,7 +134,8 @@ public class Main implements GLEventListener, KeyListener
 		switch(e.getKeyChar())
 		{
 			case 's':
-				subdividedCube = cube.subdivide();
+				if(subdividedCube == null) subdividedCube = cube.subdivide();
+				else subdividedCube = subdividedCube.subdivide();
 				showSubdividedMesh = true;
 				break;
 			case 'a':

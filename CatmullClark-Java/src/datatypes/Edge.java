@@ -37,8 +37,11 @@ public class Edge
 	 */
 	public void addWingedFaces(Face _face1, Face _face2)
 	{
-		// check we're not trying to add same faces in reverse order
-		if(wingedFaces[0] != _face2 && wingedFaces[1] != _face1 && wingedFaces[0] != _face1 && wingedFaces[1] != _face2) 
+		// check we're not trying to add same faces
+		if(wingedFaces[0] != _face2 && 
+			wingedFaces[0] != _face1 && 
+			wingedFaces[1] != _face1 && 
+			wingedFaces[1] != _face2) 
 		{
 			wingedFaces[0] = _face1;
 			wingedFaces[1] = _face2;
@@ -63,7 +66,7 @@ public class Edge
 	public void calculateEdgePoint()
 	{
 		Vertex sum = new Vertex(0,0,0);
-		
+				
 		sum = this.vertices.get(0);
 		sum = Vertex.add(sum, this.vertices.get(1));
 		sum = Vertex.add(sum, this.getWingedFaces()[0].getFacePoint());
@@ -93,13 +96,16 @@ public class Edge
 	 */
 	public void print()
 	{
-		System.out.println("Edge.print: " + this);
+//		System.out.println("Edge.print: " + this);
 		
-		System.out.println("Vertex 1: ");
+		/*System.out.println("Vertex 1: ");
 		this.vertices.get(0).print();
 		
 		System.out.println("Vertex 2: ");
-		this.vertices.get(1).print();
+		this.vertices.get(1).print();*/
+		
+		System.out.print("v1: (" + this.vertices.get(0).getX() + "," + this.vertices.get(0).getY() + "," + this.vertices.get(0).getZ() + ")");
+		System.out.println("- v2: (" + this.vertices.get(1).getX() + "," + this.vertices.get(1).getY() + "," + this.vertices.get(1).getZ() + ")");
 	}
 	
 	// public getters/setters

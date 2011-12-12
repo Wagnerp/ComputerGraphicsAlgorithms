@@ -117,7 +117,7 @@ public class Face
 	{
 		for (int i = 0; i < this.edges.size(); i++)
 		{
-			System.out.println("Edge " + (i+1) + ": ");
+			System.out.print("Edge " + (i+1) + ": ");
 			this.edges.get(i).print();
 		}
 	}
@@ -144,9 +144,51 @@ public class Face
 		for (int i = 0; i < this.edges.size(); i++)
 		{
 			Edge e = this.edges.get(i); 
-			if(e.contains(v1) && e.contains(v2)) return e; 
-		} 
-		return null; 
+
+			/*if(e.contains(v1))
+			{
+				if(e.contains(v2)) return e;
+			}*/
+			
+			/*if(e.getVertices().get(0).equals(v1))
+			{
+				if(e.getVertices().get(1).equals(v2)) return e;
+			}
+			else if(e.getVertices().get(0).equals(v2))
+			{
+				if(e.getVertices().get(1).equals(v1)) return e;				
+			}*/
+		}
+			
+		for (int i = 0; i < this.getEdges().size(); i++)
+		{
+			Edge comparisonEdge = this.getEdges().get(i);
+
+			if(
+					comparisonEdge.getVertices().get(0).getX() == v1.getX() &&
+					comparisonEdge.getVertices().get(0).getY() == v1.getY() &&
+					comparisonEdge.getVertices().get(0).getZ() == v1.getZ() &&
+					comparisonEdge.getVertices().get(1).getX() == v2.getX() &&
+					comparisonEdge.getVertices().get(1).getY() == v2.getY() &&
+					comparisonEdge.getVertices().get(1).getZ() == v2.getZ() 
+				)
+			{
+				return comparisonEdge;
+			}
+			else if(
+					comparisonEdge.getVertices().get(0).getX() == v2.getX() &&
+					comparisonEdge.getVertices().get(0).getY() == v2.getY() &&
+					comparisonEdge.getVertices().get(0).getZ() == v2.getZ() &&
+					comparisonEdge.getVertices().get(1).getX() == v1.getX() &&
+					comparisonEdge.getVertices().get(1).getY() == v1.getY() &&
+					comparisonEdge.getVertices().get(1).getZ() == v1.getZ() 
+				)
+			{
+				return comparisonEdge;
+			}
+		}
+		
+		return null;
 	}
 	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
 	
