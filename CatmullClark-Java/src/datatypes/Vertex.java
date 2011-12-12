@@ -23,24 +23,24 @@ public class Vertex
 
 	/**
 	 * Constructor
-	 * @param xCoord
-	 * @param yCoord
-	 * @param zCoord
+	 * @param _xCoord
+	 * @param _yCoord
+	 * @param _zCoord
 	 */
-	public Vertex(float xCoord, float yCoord, float zCoord)
+	public Vertex(float _xCoord, float _yCoord, float _zCoord)
 	{
-		x = xCoord;
-		y = yCoord;
-		z = zCoord;
+		x = _xCoord;
+		y = _yCoord;
+		z = _zCoord;
 	}
 	
 	/**
 	 * Draws the vertex to the passed GL2 object
-	 * @param gl
+	 * @param _gl
 	 */
-	public void draw(GL2 gl)
+	public void draw(GL2 _gl)
 	{
-		gl.glVertex3f(x, y, z);
+		_gl.glVertex3f(x, y, z);
 	}
 	
 	/**
@@ -56,16 +56,16 @@ public class Vertex
 	 * @param edge to add
 	 * @return whether the edge has been added
 	 */
-	public boolean addEdge(Edge edge)
+	public boolean addEdge(Edge _e)
 	{
 		// check that the edge isn't already stored
 		for (int i = 0; i < this.incidentEdges.size(); i++)
-			if(!edge.contains(this) || 
-					edge == this.incidentEdges.get(i) || 
-					edge == this.incidentEdges.get(i).getInvert()) 
+			if(!_e.contains(this) || 
+					_e == this.incidentEdges.get(i) || 
+					_e == this.incidentEdges.get(i).getInvert()) 
 				return false;
 	
-		this.incidentEdges.add(edge);
+		this.incidentEdges.add(_e);
 		return true;
 	}
 	
@@ -86,9 +86,9 @@ public class Vertex
 	 *  Adds the passed vertices
 	 * @param the product
 	 */
-	public static Vertex add(Vertex v1, Vertex v2)
+	public static Vertex add(Vertex _v1, Vertex _v2)
 	{
-		return new Vertex((v1.getX()+v2.getX()), (v1.getY()+v2.getY()), (v1.getZ()+v2.getZ()));
+		return new Vertex((_v1.getX()+_v2.getX()), (_v1.getY()+_v2.getY()), (_v1.getZ()+_v2.getZ()));
 	}
 	// allows the user to pass a single value to add instead of a vertex
 	public static Vertex add(Vertex v, float toAdd) { return add(v, new Vertex(toAdd,toAdd,toAdd)); }
@@ -96,12 +96,12 @@ public class Vertex
 	/**
 	 * Multiplies the vertex by the multiplicand
 	 * @param the vertex
-	 * @param multiplicand
+	 * @param _multiplicand
 	 * @return the new vertex
 	 */
-	public static Vertex multiply(Vertex v, double multiplicand)
+	public static Vertex multiply(Vertex _vertex, double _multiplicand)
 	{
-		return new Vertex((float)(v.getX()*multiplicand), (float)(v.getY()*multiplicand), (float)(v.getZ()*multiplicand));
+		return new Vertex((float)(_vertex.getX()*_multiplicand), (float)(_vertex.getY()*_multiplicand), (float)(_vertex.getZ()*_multiplicand));
 	}
 	/**
 	 * Divides the vertex by the param
@@ -109,8 +109,8 @@ public class Vertex
 	 * @param number to divide
 	 * @return the new vertex
 	 */
-	public static Vertex divide(Vertex v, double divide)
+	public static Vertex divide(Vertex _vertex, double _divisor)
 	{
-		return new Vertex((float)(v.getX()/divide), (float)(v.getY()/divide), (float)(v.getZ()/divide));
+		return new Vertex((float)(_vertex.getX()/_divisor), (float)(_vertex.getY()/_divisor), (float)(_vertex.getZ()/_divisor));
 	}
 }

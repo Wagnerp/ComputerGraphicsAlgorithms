@@ -40,7 +40,6 @@ public class Main implements GLEventListener, KeyListener
 	private static Boolean showSubdividedMesh = false;	
 	private enum DrawMode { LINE, FILL, POINT; }
 	private static DrawMode drawMode = DrawMode.FILL;
-	private static Boolean backFaceCulling = true;	
 	
 	private static JFrame frame;
 	
@@ -49,7 +48,7 @@ public class Main implements GLEventListener, KeyListener
 	// the subdivided cube object
 	private static Mesh subdividedCube;
 
-	public static void main(String[] args)
+	public static void main(String[] _args)
 	{
 		frame = new JFrame(WINDOW_TITLE);
 		GLCanvas canvas = new GLCanvas();
@@ -71,9 +70,9 @@ public class Main implements GLEventListener, KeyListener
 	}
 
 	@Override
-	public void display(GLAutoDrawable glDrawable)
+	public void display(GLAutoDrawable _glDrawable)
 	{		
-		final GL2 gl = (GL2)glDrawable.getGL();
+		final GL2 gl = (GL2)_glDrawable.getGL();
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity();
@@ -105,9 +104,9 @@ public class Main implements GLEventListener, KeyListener
 	}
 	
 	@Override
-	public void init(GLAutoDrawable glDrawable)
+	public void init(GLAutoDrawable _glDrawable)
 	{
-		final GL2 gl = (GL2)glDrawable.getGL();
+		final GL2 gl = (GL2)_glDrawable.getGL();
 
 		gl.glViewport (0, 0, WIDTH, HEIGHT);
 		gl.glMatrixMode(GL2.GL_PROJECTION); 
@@ -120,7 +119,7 @@ public class Main implements GLEventListener, KeyListener
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
-		if(backFaceCulling) gl.glEnable(GL.GL_CULL_FACE);
+		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		
 		frame.addKeyListener(this);
@@ -129,9 +128,9 @@ public class Main implements GLEventListener, KeyListener
 	/** 
 	 * Handle key released events 
 	 */
-	public void keyReleased(KeyEvent e) 
+	public void keyReleased(KeyEvent _e) 
 	{		
-		switch(e.getKeyChar())
+		switch(_e.getKeyChar())
 		{
 			case 's':
 				if(subdividedCube == null) subdividedCube = cube.subdivide();
@@ -172,8 +171,8 @@ public class Main implements GLEventListener, KeyListener
 				break;
 		}
 	}
-	public void keyTyped(KeyEvent e) { }
-	public void keyPressed(KeyEvent e) { }
+	public void keyTyped(KeyEvent _e) { }
+	public void keyPressed(KeyEvent _e) { }
 	
 	private static void setTriangleData()
 	{
@@ -287,8 +286,8 @@ public class Main implements GLEventListener, KeyListener
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {	}
+	public void reshape(GLAutoDrawable arg0, int _arg1, int _arg2, int _arg3, int _arg4) {	}
 	
 	@Override
-	public void dispose(GLAutoDrawable arg0) { }
+	public void dispose(GLAutoDrawable _arg0) { }
 }

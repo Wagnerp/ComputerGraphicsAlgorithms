@@ -37,7 +37,7 @@ public class Face
 	 * @param _edge2
 	 * @param _edge3
 	 */
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] edgeDir)
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, byte[] _edgeDir)
 	{		
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
@@ -50,7 +50,7 @@ public class Face
 		this.colour[1] = (byte)(r.nextInt(254)+1);
 		this.colour[2] = (byte)(r.nextInt(254)+1);
 		
-		this.edgeDirection = edgeDir;		
+		this.edgeDirection = _edgeDir;		
 	}
 	
 	/**
@@ -58,10 +58,10 @@ public class Face
 	 * @param _edge1
 	 * @param _edge2
 	 * @param _edge3
-	 * @param edgeDir
+	 * @param _edgeDir
 	 * @param _id
 	 */
-	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4, byte[] edgeDir)
+	public Face(Edge _edge1, Edge _edge2, Edge _edge3, Edge _edge4, byte[] _edgeDir)
 	{		
 		this.edges.add(_edge1);
 		this.edges.add(_edge2);
@@ -76,10 +76,14 @@ public class Face
 		this.colour[2] = (byte)(r.nextInt(254)+1);
 		this.colour[3] = (byte)(r.nextInt(254)+1);
 		
-		this.edgeDirection = edgeDir;		
+		this.edgeDirection = _edgeDir;		
 	}
 	
-	
+	/**
+	 * Calculates the face point by calculating
+	 * the average of the vertices and stores in 
+	 * facePoint variable
+	 */
 	public void calculateFacePoint()
 	{
 		ArrayList<Vertex> faceVertices = this.getVertices();		
@@ -92,6 +96,10 @@ public class Face
 		this.facePoint = Vertex.divide(sum, faceVertices.size());
 	}
 	
+	/**
+	 * Calculates the new vertex points for all
+	 * points in the face
+	 */
 	public void calculateVertexPoints()
 	{
 		for (int i = 0; i < this.vertices.size(); i++) this.newVertices.add(Face.getVertexPoint(this.vertices.get(i)));
@@ -99,15 +107,15 @@ public class Face
 	
 	/**
 	 * Draws each edge
-	 * @param gl
+	 * @param _gl
 	 */
-	public void draw(GL2 gl)
+	public void draw(GL2 _gl)
 	{				
 		// draw in an anti-clockwise fashion 
-		if(this.edges.size() == 4) this.edges.get(3).getVertices().get(edgeDirection[3]).draw(gl);
-		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(gl);
-		this.edges.get(1).getVertices().get(edgeDirection[1]).draw(gl);
-		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(gl);		
+		if(this.edges.size() == 4) this.edges.get(3).getVertices().get(edgeDirection[3]).draw(_gl);
+		this.edges.get(2).getVertices().get(edgeDirection[2]).draw(_gl);
+		this.edges.get(1).getVertices().get(edgeDirection[1]).draw(_gl);
+		this.edges.get(0).getVertices().get(edgeDirection[0]).draw(_gl);		
 	}
 	
 	/**
@@ -139,49 +147,30 @@ public class Face
 	 * @param v1, v2 the vertices
 	 * @return the edge
 	 */
-	public Edge getEdge(Vertex v1, Vertex v2) 
-	{ 
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			Edge e = this.edges.get(i); 
-
-			/*if(e.contains(v1))
-			{
-				if(e.contains(v2)) return e;
-			}*/
-			
-			/*if(e.getVertices().get(0).equals(v1))
-			{
-				if(e.getVertices().get(1).equals(v2)) return e;
-			}
-			else if(e.getVertices().get(0).equals(v2))
-			{
-				if(e.getVertices().get(1).equals(v1)) return e;				
-			}*/
-		}
-			
+	public Edge getEdge(Vertex _v1, Vertex _v2) 
+	{ 	
 		for (int i = 0; i < this.getEdges().size(); i++)
 		{
 			Edge comparisonEdge = this.getEdges().get(i);
 
 			if(
-					comparisonEdge.getVertices().get(0).getX() == v1.getX() &&
-					comparisonEdge.getVertices().get(0).getY() == v1.getY() &&
-					comparisonEdge.getVertices().get(0).getZ() == v1.getZ() &&
-					comparisonEdge.getVertices().get(1).getX() == v2.getX() &&
-					comparisonEdge.getVertices().get(1).getY() == v2.getY() &&
-					comparisonEdge.getVertices().get(1).getZ() == v2.getZ() 
+					comparisonEdge.getVertices().get(0).getX() == _v1.getX() &&
+					comparisonEdge.getVertices().get(0).getY() == _v1.getY() &&
+					comparisonEdge.getVertices().get(0).getZ() == _v1.getZ() &&
+					comparisonEdge.getVertices().get(1).getX() == _v2.getX() &&
+					comparisonEdge.getVertices().get(1).getY() == _v2.getY() &&
+					comparisonEdge.getVertices().get(1).getZ() == _v2.getZ() 
 				)
 			{
 				return comparisonEdge;
 			}
 			else if(
-					comparisonEdge.getVertices().get(0).getX() == v2.getX() &&
-					comparisonEdge.getVertices().get(0).getY() == v2.getY() &&
-					comparisonEdge.getVertices().get(0).getZ() == v2.getZ() &&
-					comparisonEdge.getVertices().get(1).getX() == v1.getX() &&
-					comparisonEdge.getVertices().get(1).getY() == v1.getY() &&
-					comparisonEdge.getVertices().get(1).getZ() == v1.getZ() 
+					comparisonEdge.getVertices().get(0).getX() == _v2.getX() &&
+					comparisonEdge.getVertices().get(0).getY() == _v2.getY() &&
+					comparisonEdge.getVertices().get(0).getZ() == _v2.getZ() &&
+					comparisonEdge.getVertices().get(1).getX() == _v1.getX() &&
+					comparisonEdge.getVertices().get(1).getY() == _v1.getY() &&
+					comparisonEdge.getVertices().get(1).getZ() == _v1.getZ() 
 				)
 			{
 				return comparisonEdge;
@@ -190,7 +179,7 @@ public class Face
 		
 		return null;
 	}
-	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
+	public Edge getEdge(Edge _e) { return this.getEdge(_e.getVertices().get(0), _e.getVertices().get(1)); }
 	
 	public byte[] getEdgeDirections() { return this.edgeDirection; }
 	
@@ -199,14 +188,14 @@ public class Face
 	 * @param edge we don't want returned
 	 * @return the edges
 	 */
-	public ArrayList<Edge> getEdges(Edge edge) 
+	public ArrayList<Edge> getEdges(Edge _e) 
 	{ 
 		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
 		
 		for (int i = 0; i < this.edges.size(); i++)
 		{
 			Edge e = this.edges.get(i);
-			if(e != edge) otherEdges.add(e); 
+			if(e != _e) otherEdges.add(e); 
 		}
 		
 		return otherEdges; 
@@ -222,19 +211,19 @@ public class Face
 	
 	/**
 	 * Returns the vertex of the face which isn't in the passed edge
-	 * @param edge
+	 * @param _e
 	 * @return the vertex
 	 */
-	public Vertex getPoint(Edge edge)
+	public Vertex getPoint(Edge _e)
 	{		
 		for (int i = 0; i < this.edges.size(); i++) 
 		{			
 			Edge e = this.edges.get(i);
 			
-			Vertex edgeV1 = edge.getVertices().get(0);
-			Vertex edgeV2 = edge.getVertices().get(1);
+			Vertex edgeV1 = _e.getVertices().get(0);
+			Vertex edgeV2 = _e.getVertices().get(1);
 			
-			if(!e.equals(edge))
+			if(!e.equals(_e))
 			{	
 				Vertex v1 = e.getVertices().get(0);
 				Vertex v2 = e.getVertices().get(1);
@@ -258,19 +247,20 @@ public class Face
 	 * 			vertex*(vertex valence - 3)
 	 * 							/
 	 * 					vertex valence
+	 * @return the new vertex point
 	 */
-	public static Vertex getVertexPoint(Vertex oldVertexPoint)
+	public static Vertex getVertexPoint(Vertex _oldVertexPoint)
 	{		
 		Vertex fpAvg = new Vertex(0,0,0); 									// average of incident face points
 		Vertex epAvg = new Vertex(0,0,0); 									// average of incident edge midpoints
 		Vertex vertexPoint = new Vertex(0,0,0); 							// new vertex
-		int vertValence = oldVertexPoint.getIncidentEdges().size();	// number of edges incident on current vertex
+		int vertValence = _oldVertexPoint.getIncidentEdges().size();	// number of edges incident on current vertex
 		
 		// add the face points together
 		// add the edge points together 
 		for (int l = 0; l < vertValence; l++)
 		{
-			Edge edge = oldVertexPoint.getIncidentEdges().get(l);
+			Edge edge = _oldVertexPoint.getIncidentEdges().get(l);
 			
 			fpAvg = Vertex.add(edge.getWingedFaces()[0].getFacePoint(), fpAvg);	
 			epAvg = Vertex.add(edge.getMidPoint(), epAvg);
@@ -283,7 +273,7 @@ public class Face
 		// multiply the vertices according to the algorithm (fpAvg * (1/vertValence))
 		fpAvg = Vertex.multiply(fpAvg, (double)1/vertValence);
 		epAvg = Vertex.multiply(epAvg, (double)2/vertValence);
-		vertexPoint = Vertex.multiply(oldVertexPoint, (double)(vertValence-3)/vertValence);
+		vertexPoint = Vertex.multiply(_oldVertexPoint, (double)(vertValence-3)/vertValence);
 		
 		vertexPoint = Vertex.add(vertexPoint, fpAvg);
 		vertexPoint = Vertex.add(vertexPoint, epAvg);
@@ -291,6 +281,10 @@ public class Face
 		return vertexPoint;
 	}
 	
+	/**
+	 * Creates a unique list of the vertices
+	 * @return the list of the vertices
+	 */
 	public ArrayList<Vertex> getVertices() 
 	{ 				
 		if(this.vertices.size() < 1) for (int i = 0; i < this.edges.size(); i++) this.vertices.add(this.edges.get(i).getVertices().get(this.edgeDirection[i]));

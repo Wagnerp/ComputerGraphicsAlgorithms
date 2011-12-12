@@ -34,9 +34,9 @@ public class Mesh
 	 * Adds a face to the mesh object
 	 * @param faceToAdd
 	 */
-	public void addFace(Face faceToAdd)
+	public void addFace(Face _faceToAdd)
 	{
-		this.faces.add(faceToAdd);
+		this.faces.add(_faceToAdd);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class Mesh
 	/**
 	 * Build a list of new faces using the
 	 * edge, vertex and face points
-	 * @return list of new faces (one face per vertex)
+	 * @return the new mesh
 	 */
 	private Mesh createNewFaces()
 	{				
@@ -168,60 +168,88 @@ public class Mesh
 				
 				byte ed1, ed2, ed3, ed4;
 				
-				if(edge1Obj != '-') 
+				/**
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				if(edge1Obj == 0) System.out.println("edge1Obj == 0!");
+				/**
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 * 
+				 */
+				
+				if(edge1Obj != '-' && edge1Obj != 0) 
 				{
 					e1 = e1.getInvert();
 					ed1 = 1;
 				} else ed1 = 0;
 				
-				if(edge2Obj != '-') 
+				if(edge2Obj != '#') 
 				{
 					e2 = e2.getInvert();
 					ed2 = 1;
 				} else ed2 = 0;
 				
-				if(edge3Obj != '-') 
+				if(edge3Obj != '#') 
 				{
 					e3 = e3.getInvert();
 					ed3 = 1;
 				} else ed3 = 0;
 				
-				if(edge4Obj != '-') 
+				if(edge4Obj != '#') 
 				{
 					e4 = e4.getInvert();
 					ed4 = 1;
 				} else ed4 = 0;
 				
+				/*
+				 * Dirty hack - the following faces need 
+				 * to be declared Face(e1,e2,e3,e4) 
+				 *   (rather than Face(e4,e3,e2,e1))
+				 * Front: 	1 
+				 * Back:	 	1 
+				 * Left: 	1,2 
+				 * Right: 	1,2
+				 * Top: 	  	  2,  4 
+				 * Bottom: 	  2,  4 
+				 */
+				byte[] edgeDir;
+				boolean declareFaceBackwards = true;
+				
 				switch(i)
 				{
 					case 0:
 					case 1:
-						if(j == 0)
-						{
-							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
-							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
-						}
+						if(j == 0) declareFaceBackwards = false;
 						break;
 					case 2:
 					case 3:
-						if(j == 1 || j == 3)
-						{
-							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
-							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
-						}
+						if(j == 1 || j == 3) declareFaceBackwards = false;
 						break;
 					case 4:
 					case 5:
-						if(j == 0 || j == 2)
-						{
-							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
-							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
-						}
+						if(j == 0 || j == 2) declareFaceBackwards = false;
 						break;
 				}
 				
-				byte[] edgeDir = new byte[] {ed4, ed3, ed2, ed1};
-				mesh.addFace(new Face(e4, e3, e2, e1, edgeDir));						
+				if(!declareFaceBackwards)
+				{
+					edgeDir = new byte[] {ed1, ed2, ed3, ed4};
+					mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+				}
+				else
+				{
+					edgeDir = new byte[] {ed4, ed3, ed2, ed1};
+					mesh.addFace(new Face(e4, e3, e2, e1, edgeDir));						
+				}
 	
 				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "]"); 
 			}
@@ -231,21 +259,21 @@ public class Mesh
 
 	/**
 	 * Handles drawing the mesh to screen
-	 * @param gl a reference to the GL2 object
+	 * @param _gl a reference to the GL2 object
 	 */
-	public void draw(GL2 gl)
+	public void draw(GL2 _gl)
 	{					
 		for (int i = 0; i < this.faces.size(); i++)
 		{			
 			Face face = this.faces.get(i);
 			
-			if(face.getVertices().size() == 3) gl.glBegin(GL2.GL_TRIANGLES);
-			else if(face.getVertices().size() == 4) gl.glBegin(GL2.GL_QUADS);
+			if(face.getVertices().size() == 3) _gl.glBegin(GL2.GL_TRIANGLES);
+			else if(face.getVertices().size() == 4) _gl.glBegin(GL2.GL_QUADS);
 						
-			gl.glColor3ub(face.getColour()[0], face.getColour()[1], face.getColour()[2]);
-			face.draw(gl);
+			_gl.glColor3ub(face.getColour()[0], face.getColour()[1], face.getColour()[2]);
+			face.draw(_gl);
 			
-			gl.glEnd();
+			_gl.glEnd();
 		}
 	}
 	
@@ -262,10 +290,14 @@ public class Mesh
 	}
 	
 	// public getters/setters
-	public byte getEdgeDirection(Edge e)
-	{		
-		Object[] edgeObject = new Object[2];
-		
+	
+	/**
+	 * Gets the edge direction of the passed edge
+	 * @param the edge to check
+	 * @return the direction, or a null character #
+	 */
+	public byte getEdgeDirection(Edge _e)
+	{				
 		for (int k = 0; k < this.faces.size(); k++)
 		{
 			Face comparisonFace = this.faces.get(k);
@@ -275,23 +307,23 @@ public class Mesh
 				Edge comparisonEdge = comparisonFace.getEdges().get(l);
 
 				if(
-						e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(0).getX() &&
-						e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(0).getY() &&
-						e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(0).getZ() &&
-						e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(1).getX() &&
-						e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(1).getY() &&
-						e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(1).getZ()
+						_e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(0).getX() &&
+						_e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(0).getY() &&
+						_e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(0).getZ() &&
+						_e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(1).getX() &&
+						_e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(1).getY() &&
+						_e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(1).getZ()
 					)
 				{
 					return comparisonFace.getEdgeDirections()[l];
 				}		
 				else if(
-						e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(1).getX() &&
-						e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(1).getY() &&
-						e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(1).getZ() &&
-						e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(0).getX() &&
-						e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(0).getY() &&
-						e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(0).getZ()
+						_e.getVertices().get(0).getX() == comparisonEdge.getVertices().get(1).getX() &&
+						_e.getVertices().get(0).getY() == comparisonEdge.getVertices().get(1).getY() &&
+						_e.getVertices().get(0).getZ() == comparisonEdge.getVertices().get(1).getZ() &&
+						_e.getVertices().get(1).getX() == comparisonEdge.getVertices().get(0).getX() &&
+						_e.getVertices().get(1).getY() == comparisonEdge.getVertices().get(0).getY() &&
+						_e.getVertices().get(1).getZ() == comparisonEdge.getVertices().get(0).getZ()
 						)
 				{
 					return comparisonFace.getEdgeDirections()[l];
@@ -299,7 +331,7 @@ public class Mesh
 			}
 		}
 		
-		return '-';
+		return '#';
 	}
 	
 	public ArrayList<Face> getFaces() { return this.faces; }
