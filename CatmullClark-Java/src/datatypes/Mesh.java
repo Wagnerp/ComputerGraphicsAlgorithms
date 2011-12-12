@@ -123,6 +123,8 @@ public class Mesh
 			Face face = this.faces.get(i);
 			ArrayList<Vertex> newVertices = face.getNewVertices(); 
 						
+			System.out.println("Face " + (i+1) + ": ");
+			
 			for (int j = 0; j < newVertices.size(); j++)
 			{
 				Vertex oldVertexPoint = face.getVertices().get(j);
@@ -190,11 +192,38 @@ public class Mesh
 					ed4 = 1;
 				} else ed4 = 0;
 				
-				byte[] edgeDir = new byte[] {ed1,ed2,ed3,ed4};
-								
-				mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+				switch(i)
+				{
+					case 0:
+					case 1:
+						if(j == 0)
+						{
+							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
+							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+						}
+						break;
+					case 2:
+					case 3:
+						if(j == 1 || j == 3)
+						{
+							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
+							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+						}
+						break;
+					case 4:
+					case 5:
+						if(j == 0 || j == 2)
+						{
+							byte[] edgeDir = new byte[] {ed1, ed2, ed3, ed4};
+							mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+						}
+						break;
+				}
+				
+				byte[] edgeDir = new byte[] {ed4, ed3, ed2, ed1};
+				mesh.addFace(new Face(e4, e3, e2, e1, edgeDir));						
 	
-				System.out.println("edgeDir[" + ed1 + "," + ed2 + "," + ed3 + "," + ed4 + "]"); 
+				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "]"); 
 			}
 		}
 		return mesh;
