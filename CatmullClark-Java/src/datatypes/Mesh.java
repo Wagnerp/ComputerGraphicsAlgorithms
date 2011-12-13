@@ -99,6 +99,7 @@ public class Mesh
 				{
 					Face comparisonFace = this.faces.get(k);
 					
+					// store references to the winged faces
 					if(comparisonFace != currentFace) 
 					{
 						if(comparisonFace.getEdge(currentEdge) != null)
@@ -121,10 +122,8 @@ public class Mesh
 		for (int i = 0; i < this.faces.size(); i++)
 		{
 			Face face = this.faces.get(i);
-			ArrayList<Vertex> newVertices = face.getNewVertices(); 
-						
-			System.out.println("Face " + (i+1) + ": ");
-			
+			ArrayList<Vertex> newVertices = face.getNewVertices(); // the new vertex points
+									
 			for (int j = 0; j < newVertices.size(); j++)
 			{
 				Vertex oldVertexPoint = face.getVertices().get(j);
@@ -133,6 +132,7 @@ public class Mesh
 				Vertex edge1Point = null, edge2Point = null;
 				Edge e1, e2, e3, e4;
 
+				// get the incident edges which are in this face
 				for (int k = 0; k < oldVertexPoint.getIncidentEdges().size(); k++)
 				{
 					Edge incidentEdge = face.getEdge(oldVertexPoint.getIncidentEdges().get(k));
@@ -161,82 +161,68 @@ public class Mesh
 				//
 				// Note to self: edgeDir has 4 bytes
 				//
-				byte edge1Obj = mesh.getEdgeDirection(e1);
-				byte edge2Obj = mesh.getEdgeDirection(e2);
-				byte edge3Obj = mesh.getEdgeDirection(e3);
-				byte edge4Obj = mesh.getEdgeDirection(e4);
 				
 				byte ed1, ed2, ed3, ed4;
 				
-				/**
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 */
-				if(edge1Obj == 0) System.out.println("edge1Obj == 0!");
-				/**
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
-				 * 
+				/*
+				 * find which edges already exist, and set 
+				 * their direction to '1'
 				 */
 				
-				if(edge1Obj != '-' && edge1Obj != 0) 
+				if(mesh.getEdgeDirection(e1) != '#') 
 				{
 					e1 = e1.getInvert();
 					ed1 = 1;
 				} else ed1 = 0;
 				
-				if(edge2Obj != '#') 
+				if(mesh.getEdgeDirection(e2) != '#') 
 				{
 					e2 = e2.getInvert();
 					ed2 = 1;
 				} else ed2 = 0;
 				
-				if(edge3Obj != '#') 
+				if(mesh.getEdgeDirection(e3) != '#') 
 				{
 					e3 = e3.getInvert();
 					ed3 = 1;
 				} else ed3 = 0;
 				
-				if(edge4Obj != '#') 
+				if(mesh.getEdgeDirection(e4) != '#') 
 				{
 					e4 = e4.getInvert();
 					ed4 = 1;
 				} else ed4 = 0;
 				
 				/*
-				 * Dirty hack - the following faces need 
-				 * to be declared Face(e1,e2,e3,e4) 
-				 *   (rather than Face(e4,e3,e2,e1))
-				 * Front: 	1 
-				 * Back:	 	1 
-				 * Left: 	1,2 
-				 * Right: 	1,2
-				 * Top: 	  	  2,  4 
-				 * Bottom: 	  2,  4 
+				 * Hack:----------------------------------
+				 * the following faces need to be declared 
+				 * backwards; can't see a general pattern 
+				 * that could be applied during recursion
+				 * ---------------------------------------
+				 * Front  |	  2 3 4 
+				 * Back   |	  2 3 4 
+				 * Left   | 1     4
+				 * Right  |	1     4
+				 * Top 	 | 1   3   
+				 * Bottom | 1   3  
 				 */
+				
 				byte[] edgeDir;
-				boolean declareFaceBackwards = true;
+				boolean declareFaceBackwards = false;
 				
 				switch(i)
 				{
 					case 0:
 					case 1:
-						if(j == 0) declareFaceBackwards = false;
+						if(j == 1 || j == 2 || j == 3) declareFaceBackwards = true;
 						break;
 					case 2:
 					case 3:
-						if(j == 1 || j == 3) declareFaceBackwards = false;
+						if(j == 0 || j == 2) declareFaceBackwards = true;
 						break;
 					case 4:
 					case 5:
-						if(j == 0 || j == 2) declareFaceBackwards = false;
+						if(j == 1 || j == 3) declareFaceBackwards = true;
 						break;
 				}
 				
@@ -244,14 +230,15 @@ public class Mesh
 				{
 					edgeDir = new byte[] {ed1, ed2, ed3, ed4};
 					mesh.addFace(new Face(e1, e2, e3, e4, edgeDir));
+					System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "]");
 				}
 				else
 				{
 					edgeDir = new byte[] {ed4, ed3, ed2, ed1};
 					mesh.addFace(new Face(e4, e3, e2, e1, edgeDir));						
+					System.out.println("edgeDir[" + edgeDir[3] + "," + edgeDir[2] + "," + edgeDir[1] + "," + edgeDir[0] + "]"); 
 				}
 	
-				System.out.println("edgeDir[" + edgeDir[0] + "," + edgeDir[1] + "," + edgeDir[2] + "," + edgeDir[3] + "]"); 
 			}
 		}
 		return mesh;
@@ -330,7 +317,6 @@ public class Mesh
 				}
 			}
 		}
-		
 		return '#';
 	}
 	

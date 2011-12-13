@@ -212,6 +212,7 @@ public class Main implements GLEventListener, KeyListener
 		cube.addFace(new Face(e3, e10, e5, e12, new byte[]{1,1,1,1}));
 	}
 	
+	@SuppressWarnings("unused")
 	private static void setTriangleDataSmall()
 	{
 		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
