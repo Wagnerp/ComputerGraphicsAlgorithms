@@ -207,17 +207,6 @@ public class Mesh
 					
 					if(comparisonFace.getEdge(currentEdge) != null && comparisonFace != currentFace) 
 						currentEdge.addWingedFaces(currentFace, comparisonFace);
-					
-					/*Face comparisonFace = this.faces.get(k);
-					
-					for (int l = 0; l < comparisonFace.getEdges().size(); l++)
-					{
-						Edge comprisonEdge = comparisonFace.getEdges().get(l);
-						
-						// add the two winging faces to 'edge' object
-						if(currentEdge.equals(comprisonEdge) && !currentFace.equals(comparisonFace))	
-							currentEdge.addWingedFaces(currentFace, comparisonFace);
-					}*/
 				}
 			}
 		}

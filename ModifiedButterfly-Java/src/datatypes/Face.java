@@ -50,7 +50,6 @@ public class Face
 	/**
 	 * Splits the edges of the face face into 9 new edges and build new faces
 	 * @return ArrayList of the new faces
-	 * TODO Face.subdivide: re-factor
 	 */
 	public Face[] subdivide()
 	{ 			
@@ -142,6 +141,48 @@ public class Face
 	}
 	
 	//	public getters/setters
+	
+	public byte[] getColour() { return this.colour; }
+	
+	/**
+	 * Gets the edge from it's vertices
+	 * @param v1, v2 the vertices
+	 * @return the edge
+	 */
+	public Edge getEdge(Vertex v1, Vertex v2) 
+	{ 
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i); 
+			if(e.contains(v1) && e.contains(v2)) return e; 
+		} 
+		return null; 
+	}
+	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
+	
+	public byte[] getEdgeDirections() { return this.edgeDirection; }
+	
+	/**
+	 * Returns the edges other than the passed edge
+	 * @param edge we don't want returned
+	 * @return the edges
+	 */
+	public ArrayList<Edge> getEdges(Edge edge) 
+	{ 
+		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
+		
+		for (int i = 0; i < this.edges.size(); i++)
+		{
+			Edge e = this.edges.get(i);
+			if(e != edge) otherEdges.add(e); 
+		}
+		
+		return otherEdges; 
+	}
+	public ArrayList<Edge> getEdges() { return this.edges; }
+	
+	public String getId() { return this.id; }
+	
 	/**
 	 * Returns the vertex of the face which isn't in the passed edge
 	 * @param edge
@@ -168,40 +209,4 @@ public class Face
 		
 		return null;
 	}
-	/**
-	 * Gets the edge from it's vertices
-	 * @param v1, v2 the vertices
-	 * @return the edge
-	 */
-	public Edge getEdge(Vertex v1, Vertex v2) 
-	{ 
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			Edge e = this.edges.get(i); 
-			if(e.contains(v1) && e.contains(v2)) return e; 
-		} 
-		return null; 
-	}
-	public Edge getEdge(Edge e) { return this.getEdge(e.getVertices().get(0), e.getVertices().get(1)); }
-	/**
-	 * Returns the edges other than the passed edge
-	 * @param edge we don't want returned
-	 * @return the edges
-	 */
-	public ArrayList<Edge> getEdges(Edge edge) 
-	{ 
-		ArrayList<Edge> otherEdges = new ArrayList<Edge>();
-		
-		for (int i = 0; i < this.edges.size(); i++)
-		{
-			Edge e = this.edges.get(i);
-			if(e != edge) otherEdges.add(e); 
-		}
-		
-		return otherEdges; 
-	}
-	public ArrayList<Edge> getEdges() { return this.edges; }
-	public String getId() { return this.id; }
-	public byte[] getColour() { return this.colour; }
-	public byte[] getEdgeDirections() { return this.edgeDirection; }
 }

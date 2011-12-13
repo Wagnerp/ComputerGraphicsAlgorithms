@@ -62,7 +62,8 @@ public class Main implements GLEventListener, KeyListener
 		animator.add(canvas);
 		animator.start();
 		
-		setTriangleData();
+//		setTriangleData();
+		setTriangleDataSmall();
 		// initially calculate the winged edges
 		cube.calculateWingingFaces();
 	}
@@ -333,6 +334,60 @@ public class Main implements GLEventListener, KeyListener
 		cube.addFace(new Face(e58, e63, e62,   new byte[]{1,0,1}, "ri6"));
 		cube.addFace(new Face(e63, e64, e56,   new byte[]{1,0,1}, "ri7"));
 		cube.addFace(new Face(e61, e26, e64,   new byte[]{1,1,1}, "ri8"));	// face 48
+	}
+	
+	@SuppressWarnings("unused")
+	private static void setTriangleDataSmall()
+	{
+		Vertex v1 = new Vertex(0.0f, 0.0f, 0.0f);
+		Vertex v2 = new Vertex(0.0f, 1.0f, 0.0f);
+		Vertex v3 = new Vertex(1.0f, 1.0f, 0.0f);
+		Vertex v4 = new Vertex(1.0f, 0.0f, 0.0f);
+		Vertex v5 = new Vertex(1.0f, 0.0f, -1.0f);
+		Vertex v6 = new Vertex(1.0f, 1.0f, -1.0f);
+		Vertex v7 = new Vertex(0.0f, 1.0f, -1.0f);		
+		Vertex v8 = new Vertex(0.0f, 0.0f, -1.0f);
+		
+		Edge e1 = new Edge(v1, v2);
+		Edge e2 = new Edge(v2, v3);
+		Edge e3 = new Edge(v3, v1);
+		Edge e4 = new Edge(v3, v4);
+		Edge e5 = new Edge(v4, v1);
+		Edge e6 = new Edge(v5, v6);
+		Edge e7 = new Edge(v6, v7);
+		Edge e8 = new Edge(v7, v5);
+		Edge e9 = new Edge(v7, v8);
+		Edge e10 = new Edge(v8, v5);
+		Edge e11 = new Edge(v2, v7);
+		Edge e12 = new Edge(v6, v2);		
+		Edge e13 = new Edge(v6, v3);	
+		Edge e14 = new Edge(v8, v1);
+		Edge e15 = new Edge(v4, v8);
+		Edge e16 = new Edge(v4, v5);
+		Edge e17 = new Edge(v2, v8);
+		Edge e18 = new Edge(v6, v4);
+		
+		// Hide some code in the Mesh class
+		cube = subdividedCube = new Mesh("Cube");
+		
+		// front face
+		cube.addFace(new Face(e1, e2, e3,    new byte[]{0,0,0}, "")); 
+		cube.addFace(new Face(e3, e4, e5,    new byte[]{1,0,0}, ""));
+		// back face	
+		cube.addFace(new Face(e6, e7, e8,    new byte[]{0,0,0}, ""));
+		cube.addFace(new Face(e8, e9, e10,   new byte[]{1,0,0}, ""));
+		// top face
+		cube.addFace(new Face(e11, e7, e12,  new byte[]{0,1,0}, ""));
+		cube.addFace(new Face(e12, e13, e2,  new byte[]{1,0,1}, ""));
+		// bottom face
+		cube.addFace(new Face(e14, e5, e15,  new byte[]{0,1,0}, ""));
+		cube.addFace(new Face(e15, e16, e10, new byte[]{1,0,1}, ""));
+		// left face
+		cube.addFace(new Face(e9, e11, e17,  new byte[]{1,1,0}, ""));
+		cube.addFace(new Face(e17, e1, e14,  new byte[]{1,1,1}, ""));
+		// right face
+		cube.addFace(new Face(e4, e13, e18,  new byte[]{1,1,0}, ""));
+		cube.addFace(new Face(e18, e6, e16,  new byte[]{1,1,1}, ""));
 	}
 
 	@Override
