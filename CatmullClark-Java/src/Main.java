@@ -62,7 +62,9 @@ public class Main implements GLEventListener, KeyListener
 		animator.start();
 		
 		setTriangleData();
-//		setTriangleDataSmall();
+		
+		// alternative mesh shapes
+//		setTriangleDataSmall();   
 //		setTriangleDataPyramid();
 
 		// initially calculate the winged edges
@@ -119,7 +121,7 @@ public class Main implements GLEventListener, KeyListener
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glDepthFunc(GL.GL_LEQUAL);
-		gl.glEnable(GL.GL_CULL_FACE);
+//		gl.glEnable(GL.GL_CULL_FACE);
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 		
 		frame.addKeyListener(this);

@@ -10,7 +10,6 @@ import javax.media.opengl.GL2;
  * So far handles tris and quads
  *
  * TODO: Face: Move colours into an ArrayList
- * TODO: Face: Organise getters/setters better
  *
  * @author Tom
  * @version 0.1
