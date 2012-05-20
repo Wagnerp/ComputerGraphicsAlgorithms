@@ -11,25 +11,29 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{	
-		int arraySize = 100000;
+		int arraySize = 10;
 		Random randomGenerator = new Random();
 		
 		ArrayList<Integer> arrayToSort = new ArrayList<Integer>(); 
 		for (int i = 0; i < arraySize; i++) arrayToSort.add((randomGenerator.nextInt(arraySize)+1));
 		
 		arrayToSort = quicksort(arrayToSort);
+		
+		System.out.println(arrayToSort);
 	}
 
 	private static ArrayList<Integer> quicksort(ArrayList<Integer> arrayToSort)
 	{
 		if(arrayToSort.size() < 2) return arrayToSort;
 		
-		int pivotValue = arrayToSort.get(arrayToSort.size()/2);
+		int pivotIndex = arrayToSort.size()-1;
+		int pivotValue = arrayToSort.get(pivotIndex);
+		
 		ArrayList<Integer> smaller = new ArrayList<Integer>();
 		ArrayList<Integer> bigger = new ArrayList<Integer>();
 		ArrayList<Integer> toReturn = new ArrayList<Integer>();
 		
-		arrayToSort.remove((Object)pivotValue);
+		arrayToSort.remove(pivotIndex);
 		bigger.add(pivotValue);
 		
 		for (int i = 0; i < arrayToSort.size(); i++)
@@ -37,13 +41,14 @@ public class Main
 			int element = arrayToSort.get(i);
 			if(element <= pivotValue) smaller.add(element);
 			else bigger.add(element);
+			arrayToSort.remove(i);
 		}
 		
 		toReturn.addAll(bigger);
 		toReturn.addAll(smaller);
 		
 		return concatenate(quicksort(smaller),quicksort(bigger));
-	}	
+	}
 	
 	private static ArrayList<Integer> concatenate(ArrayList<Integer> al1, ArrayList<Integer> al2)
 	{
